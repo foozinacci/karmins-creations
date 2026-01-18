@@ -1,1 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Trail Trivia 💡</title>
+    <meta name="description"
+        content="A fun two-team trivia game where players race along a heart-shaped path to reach the glowing lightbulb!">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            overflow-x: hidden;
+            color: white;
+        }
+
+        /* Animated stars background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 .bulb {
+            font-size: 2rem;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px #ffd700);
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px #ffd700);
+            }
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+            font-size: 0.95rem;
+        }
+
+        /* Game Status Bar */
+        .status-bar {
+            text-align: center;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            margin: 0 auto 20px;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .status-bar .current-turn {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-bar .player-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Main Game Container */
+        .game-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+            gap: 20px;
+        }
+
+        /* Team Panels */
+        .team-panel {
+            width: 220px;
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--team-color-1), var(--team-color-2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .team-panel.team1 {
+            --team-color-1: #4ade80;
+            --team-color-2: #22c55e;
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .team-panel.team2 {
+            --team-color-1: #f472b6;
+            --team-color-2: #ec4899;
+            background: rgba(236, 72, 153, 0.15);
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .team-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .team1 .team-icon {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+        }
+
+        .team2 .team-icon {
+            background: linear-gradient(135deg, #f472b6, #ec4899);
+        }
+
+        .team-info h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .team-info .progress {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .team-rule {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .player-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .player-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .player-card.active {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .player-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+
+        .player-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            opacity: 0.5;
+        }
+
+        .player-details {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .player-status {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Game Board */
+        .game-board {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 450px;
+            height: 420px;
+        }
+
+        /* Finish Zones */
+        .finish-zone {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .finish-zone.finish1 {
+            top: 0;
+            left: 80px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent);
+            border: 3px solid rgba(34, 197, 94, 0.6);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .finish-zone.finish2 {
+            top: 0;
+            right: 80px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent);
+            border: 3px solid rgba(236, 72, 153, 0.6);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .finish-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .finish-slots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .finish-slot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .finish-slot.filled {
+            background: currentColor;
+        }
+
+        /* Path Circles */
+        .path-circle {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(168, 85, 247, 0.4);
+            border: 3px solid #a855f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+        }
+
+        .path-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+        }
+
+        .path-circle .player-token {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Center Lightbulb */
+        .center-lightbulb {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            animation: bulbGlow 2s ease-in-out infinite alternate;
+            z-index: 10;
+            filter: drop-shadow(0 0 20px #ffd700);
+        }
+
+        @keyframes bulbGlow {
+            from {
+                filter: drop-shadow(0 0 10px #ffd700) drop-shadow(0 0 20px #ffa500);
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            to {
+                filter: drop-shadow(0 0 25px #ffd700) drop-shadow(0 0 40px #ffa500);
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        /* Start Position */
+        .start-position {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .start-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: 3px solid #a78bfa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+        }
+
+        .start-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Action Button */
+        .action-button {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f472b6, #ec4899, #db2777);
+            color: white;
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(236, 72, 153, 0.6);
+        }
+
+        .action-button:active {
+            transform: translateY(0);
+        }
+
+        .action-button.rolling {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateX(5px) rotate(5deg);
+            }
+        }
+
+        /* Dice Display */
+        .dice-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            animation: none;
+        }
+
+        .dice-display.show {
+            animation: diceRoll 1s ease-out forwards;
+        }
+
+        @keyframes diceRoll {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.5) rotate(360deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1) rotate(720deg);
+            }
+        }
+
+        /* Trivia Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .trivia-modal {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 0 50px rgba(139, 92, 246, 0.3);
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-option {
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            color: white;
+            text-align: left;
+        }
+
+        .answer-option:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateX(5px);
+        }
+
+        .answer-option.correct {
+            background: rgba(34, 197, 94, 0.3);
+            border-color: #22c55e;
+        }
+
+        .answer-option.incorrect {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: #ef4444;
+        }
+
+        /* Winner Modal */
+        .winner-modal {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .winner-modal h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .winner-modal .trophy {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .winner-modal .winner-name {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #ffd700;
+        }
+
+        .play-again-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #1e1b4b;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Stars Background -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1><span class="bulb">💡</span> Heart Trail Trivia <span class="bulb">💡</span></h1>
+        <p>Answer trivia questions to reach the glowing lightbulb!</p>
+    </header>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="current-turn">
+            <span>Team 1</span>
+            <span class="player-dot" style="background: #3b82f6;"></span>
+            <span>- <strong id="currentPlayerName">Blue Runner</strong>: Roll ODD (1, 3, 5) to escape!</span>
+        </div>
+    </div>
+
+    <!-- Main Game Container -->
+    <div class="game-container">
+        <!-- Team 1 Panel -->
+        <div class="team-panel team1">
+            <div class="team-header">
+                <div class="team-icon">⭐</div>
+                <div class="team-info">
+                    <h2>TEAM 1</h2>
+                    <div class="progress"><span id="team1Finished">0</span>/4 finished</div>
+                </div>
+            </div>
+            <div class="team-rule">Roll ODD to escape</div>
+            <div class="player-list" id="team1Players">
+                <!-- Players will be added via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Game Board -->
+        <div class="game-board">
+            <div class="heart-container" id="heartContainer">
+                <!-- Finish Zones -->
+                <div class="finish-zone finish1" id="finishZone1">
+                    <div class="finish-slots">
+                        <div class="finish-slot" data-slot="0"></div>
+                        <div class="finish-slot" data-slot="1"></div>
+                        <div class="finish-slot" data-slot="2"></div>
+                        <div class="finish-slot" data-slot="3"></div>
+                    </div>
+                    <div class="finish-label">Finish 1</div>
+                </div>
+                <div class="finish-zone finish2" id="finishZone2">
+                    <div class="finish-slots">
+                        <div class="finish-slot" data-slot="0"></div>
+                        <div class="finish-slot" data-slot="1"></div>
+                        <div class="finish-slot" data-slot="2"></div>
+                        <div class="finish-slot" data-slot="3"></div>
+                    </div>
+                    <div class="finish-label">Finish 2</div>
+                </div>
+
+                <!-- Center Lightbulb -->
+                <div class="center-lightbulb">💡</div>
+
+                <!-- Path circles will be generated via JavaScript -->
+
+                <!-- Start Position -->
+                <div class="start-position">
+                    <div class="start-circle">🎲</div>
+                    <div class="start-label">Start</div>
+                </div>
+            </div>
+
+            <!-- Dice Display -->
+            <div class="dice-display" id="diceDisplay">🎲</div>
+
+            <!-- Action Button -->
+            <button class="action-button" id="actionButton">🎲 Roll to Escape</button>
+        </div>
+
+        <!-- Team 2 Panel -->
+        <div class="team-panel team2">
+            <div class="team-header">
+                <div class="team-icon">💫</div>
+                <div class="team-info">
+                    <h2>TEAM 2</h2>
+                    <div class="progress"><span id="team2Finished">0</span>/4 finished</div>
+                </div>
+            </div>
+            <div class="team-rule">Roll EVEN to escape</div>
+            <div class="player-list" id="team2Players">
+                <!-- Players will be added via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Trivia Modal -->
+    <div class="modal-overlay" id="triviaModal">
+        <div class="trivia-modal">
+            <div class="modal-header">
+                <h3>🧠 Trivia Time!</h3>
+                <p id="triviaPlayerName">Player Name - Answer correctly to move forward!</p>
+            </div>
+            <div class="question-text" id="questionText">
+                What is the capital of France?
+            </div>
+            <div class="answer-options" id="answerOptions">
+                <!-- Answers will be added via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
+    <div class="modal-overlay" id="winnerModal">
+        <div class="winner-modal">
+            <div class="trophy">🏆</div>
+            <h2>🎉 Congratulations! 🎉</h2>
+            <div class="winner-name" id="winnerName">Team 1 Wins!</div>
+            <button class="play-again-btn" id="playAgainBtn">🔄 Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GAME CONFIGURATION ====================
+        const PATH_LENGTH = 20;
+
+        const TEAM1_PLAYERS = [
+            { name: 'Blue Runner', color: '#3b82f6', emoji: '🔵' },
+            { name: 'Yellow Star', color: '#eab308', emoji: '⭐' },
+            { name: 'Green Hero', color: '#22c55e', emoji: '🟢' },
+            { name: 'Purple Legend', color: '#a855f7', emoji: '🟣' }
+        ];
+
+        const TEAM2_PLAYERS = [
+            { name: 'Pink Flash', color: '#ec4899', emoji: '💗' },
+            { name: 'Orange Blaze', color: '#f97316', emoji: '🟠' },
+            { name: 'Cyan Wave', color: '#06b6d4', emoji: '🔵' },
+            { name: 'Red Storm', color: '#ef4444', emoji: '🔴' }
+        ];
+
+        const TRIVIA_QUESTIONS = [
+            { question: "What is the capital of France?", answers: ["Paris", "London", "Berlin", "Madrid"], correct: 0 },
+            { question: "Which planet is known as the Red Planet?", answers: ["Venus", "Mars", "Jupiter", "Saturn"], correct: 1 },
+            { question: "What is 7 × 8?", answers: ["54", "56", "58", "62"], correct: 1 },
+            { question: "Who painted the Mona Lisa?", answers: ["Van Gogh", "Picasso", "Da Vinci", "Rembrandt"], correct: 2 },
+            { question: "What is the largest ocean?", answers: ["Atlantic", "Indian", "Arctic", "Pacific"], correct: 3 },
+            { question: "How many continents are there?", answers: ["5", "6", "7", "8"], correct: 2 },
+            { question: "What is the chemical symbol for gold?", answers: ["Go", "Gd", "Au", "Ag"], correct: 2 },
+            { question: "Which animal is the fastest?", answers: ["Lion", "Cheetah", "Horse", "Falcon"], correct: 1 },
+            { question: "What year did World War II end?", answers: ["1943", "1944", "1945", "1946"], correct: 2 },
+            { question: "What is the smallest prime number?", answers: ["0", "1", "2", "3"], correct: 2 },
+            { question: "Which country has the most people?", answers: ["USA", "India", "China", "Russia"], correct: 2 },
+            { question: "What is H2O commonly known as?", answers: ["Oxygen", "Hydrogen", "Water", "Salt"], correct: 2 },
+            { question: "How many legs does a spider have?", answers: ["6", "8", "10", "12"], correct: 1 },
+            { question: "What is the largest mammal?", answers: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], correct: 1 },
+            { question: "Which instrument has 88 keys?", answers: ["Guitar", "Violin", "Piano", "Drums"], correct: 2 }
+        ];
+
+        // ==================== GAME STATE ====================
+        let gameState = {
+            currentTeam: 1,
+            currentPlayerIndex: 0,
+            team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}` })),
+            team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}` })),
+            team1Finished: 0,
+            team2Finished: 0,
+            isRolling: false,
+            currentQuestion: null,
+            pendingMove: 0
+        };
+
+        // ==================== HEART PATH COORDINATES ====================
+        function generateHeartPath() {
+            const positions = [];
+            const centerX = 225;
+            const centerY = 200;
+            const scale = 8;
+
+            // Generate heart shape using parametric equation
+            for (let i = 0; i <= PATH_LENGTH; i++) {
+                const t = (i / PATH_LENGTH) * 2 * Math.PI - Math.PI / 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+
+                positions.push({
+                    x: centerX + x * scale - 18,
+                    y: centerY + y * scale - 20
+                });
+            }
+
+            return positions;
+        }
+
+        const pathPositions = generateHeartPath();
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            createStars();
+            renderPlayers();
+            createHeartPath();
+            updateUI();
+            setupEventListeners();
+        }
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function renderPlayers() {
+            const team1Container = document.getElementById('team1Players');
+            const team2Container = document.getElementById('team2Players');
+
+            team1Container.innerHTML = gameState.team1.map((player, i) => `
+                <div class="player-card ${gameState.currentTeam === 1 && gameState.currentPlayerIndex === i ? 'active' : ''}" data-player="${player.id}">
+                    <div class="player-avatar" style="background: ${player.color}; color: ${player.color};">
+                        ${player.name.charAt(0)}
+                    </div>
+                    <div class="player-details">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-status">${player.finished ? '✅ Finished' : `📍 ${player.position < 0 ? 'Start' : `Step ${player.position + 1}/${PATH_LENGTH}`}`}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            team2Container.innerHTML = gameState.team2.map((player, i) => `
+                <div class="player-card ${gameState.currentTeam === 2 && gameState.currentPlayerIndex === i ? 'active' : ''}" data-player="${player.id}">
+                    <div class="player-avatar" style="background: ${player.color}; color: ${player.color};">
+                        ${player.name.charAt(0)}
+                    </div>
+                    <div class="player-details">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-status">${player.finished ? '✅ Finished' : `📍 ${player.position < 0 ? 'Start' : `Step ${player.position + 1}/${PATH_LENGTH}`}`}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function createHeartPath() {
+            const container = document.getElementById('heartContainer');
+
+            // Remove existing path circles (but keep finish zones and other elements)
+            container.querySelectorAll('.path-circle').forEach(el => el.remove());
+
+            // Create path circles
+            pathPositions.forEach((pos, index) => {
+                const circle = document.createElement('div');
+                circle.className = 'path-circle';
+                circle.id = `path-${index}`;
+                circle.style.left = pos.x + 'px';
+                circle.style.top = pos.y + 'px';
+                container.appendChild(circle);
+            });
+
+            updatePlayerPositions();
+        }
+
+        function updatePlayerPositions() {
+            // Clear all tokens from path
+            document.querySelectorAll('.path-circle .player-token').forEach(el => el.remove());
+
+            // Place players on path
+            const allPlayers = [
+                ...gameState.team1.map((p, i) => ({ ...p, team: 1, index: i })),
+                ...gameState.team2.map((p, i) => ({ ...p, team: 2, index: i }))
+            ];
+
+            allPlayers.forEach(player => {
+                if (player.position >= 0 && player.position < PATH_LENGTH && !player.finished) {
+                    const pathCircle = document.getElementById(`path-${player.position}`);
+                    if (pathCircle) {
+                        const token = document.createElement('div');
+                        token.className = 'player-token';
+                        token.style.background = player.color;
+                        token.textContent = player.name.charAt(0);
+                        pathCircle.appendChild(token);
+                    }
+                }
+            });
+
+            // Update finish zones
+            updateFinishZones();
+        }
+
+        function updateFinishZones() {
+            const finish1 = document.getElementById('finishZone1');
+            const finish2 = document.getElementById('finishZone2');
+
+            // Update Team 1 finish slots
+            const team1Finished = gameState.team1.filter(p => p.finished);
+            finish1.querySelectorAll('.finish-slot').forEach((slot, i) => {
+                if (team1Finished[i]) {
+                    slot.style.background = team1Finished[i].color;
+                    slot.classList.add('filled');
+                } else {
+                    slot.style.background = '';
+                    slot.classList.remove('filled');
+                }
+            });
+
+            // Update Team 2 finish slots
+            const team2Finished = gameState.team2.filter(p => p.finished);
+            finish2.querySelectorAll('.finish-slot').forEach((slot, i) => {
+                if (team2Finished[i]) {
+                    slot.style.background = team2Finished[i].color;
+                    slot.classList.add('filled');
+                } else {
+                    slot.style.background = '';
+                    slot.classList.remove('filled');
+                }
+            });
+        }
+
+        function updateUI() {
+            const currentPlayer = getCurrentPlayer();
+            const team = gameState.currentTeam;
+            const rule = team === 1 ? 'ODD (1, 3, 5)' : 'EVEN (2, 4, 6)';
+
+            document.getElementById('currentPlayerName').textContent = currentPlayer.name;
+            document.querySelector('.status-bar .current-turn').innerHTML = `
+                <span>Team ${team}</span>
+                <span class="player-dot" style="background: ${currentPlayer.color};"></span>
+                <span>- <strong>${currentPlayer.name}</strong>: Roll ${rule} to escape!</span>
+            `;
+
+            document.getElementById('team1Finished').textContent = gameState.team1Finished;
+            document.getElementById('team2Finished').textContent = gameState.team2Finished;
+
+            renderPlayers();
+        }
+
+        function getCurrentPlayer() {
+            const team = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
+            return team[gameState.currentPlayerIndex];
+        }
+
+        // ==================== GAME LOGIC ====================
+        function setupEventListeners() {
+            document.getElementById('actionButton').addEventListener('click', handleAction);
+            document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+        }
+
+        function handleAction() {
+            if (gameState.isRolling) return;
+
+            const player = getCurrentPlayer();
+
+            if (player.position < 0) {
+                // Player at start - roll to escape
+                rollToEscape();
+            } else {
+                // Player on path - roll to move
+                rollToMove();
+            }
+        }
+
+        function rollToEscape() {
+            gameState.isRolling = true;
+            const button = document.getElementById('actionButton');
+            button.classList.add('rolling');
+
+            const roll = Math.floor(Math.random() * 6) + 1;
+            showDice(roll);
+
+            setTimeout(() => {
+                button.classList.remove('rolling');
+                const team = gameState.currentTeam;
+                const isOdd = roll % 2 === 1;
+                const escaped = (team === 1 && isOdd) || (team === 2 && !isOdd);
+
+                if (escaped) {
+                    // Player escapes to position 0
+                    const player = getCurrentPlayer();
+                    player.position = 0;
+                    updatePlayerPositions();
+                    showTrivia();
+                } else {
+                    // Failed to escape, next player
+                    gameState.isRolling = false;
+                    nextPlayer();
+                }
+            }, 1200);
+        }
+
+        function rollToMove() {
+            gameState.isRolling = true;
+            const button = document.getElementById('actionButton');
+            button.classList.add('rolling');
+
+            const roll = Math.floor(Math.random() * 6) + 1;
+            showDice(roll);
+            gameState.pendingMove = roll;
+
+            setTimeout(() => {
+                button.classList.remove('rolling');
+                showTrivia();
+            }, 1200);
+        }
+
+        function showDice(value) {
+            const diceEmojis = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+            const diceDisplay = document.getElementById('diceDisplay');
+            diceDisplay.textContent = diceEmojis[value - 1];
+            diceDisplay.classList.remove('show');
+            void diceDisplay.offsetWidth; // Trigger reflow
+            diceDisplay.classList.add('show');
+        }
+
+        function showTrivia() {
+            const player = getCurrentPlayer();
+            const questionIndex = Math.floor(Math.random() * TRIVIA_QUESTIONS.length);
+            gameState.currentQuestion = TRIVIA_QUESTIONS[questionIndex];
+
+            document.getElementById('triviaPlayerName').textContent =
+                `${player.name} - Answer correctly to move forward!`;
+            document.getElementById('questionText').textContent =
+                gameState.currentQuestion.question;
+
+            const optionsContainer = document.getElementById('answerOptions');
+            optionsContainer.innerHTML = gameState.currentQuestion.answers.map((answer, i) => `
+                <button class="answer-option" data-index="${i}">${answer}</button>
+            `).join('');
+
+            optionsContainer.querySelectorAll('.answer-option').forEach(btn => {
+                btn.addEventListener('click', handleAnswer);
+            });
+
+            document.getElementById('triviaModal').classList.add('show');
+        }
+
+        function handleAnswer(e) {
+            const selectedIndex = parseInt(e.target.dataset.index);
+            const correct = selectedIndex === gameState.currentQuestion.correct;
+            const player = getCurrentPlayer();
+
+            // Disable all buttons
+            document.querySelectorAll('.answer-option').forEach(btn => {
+                btn.disabled = true;
+                if (parseInt(btn.dataset.index) === gameState.currentQuestion.correct) {
+                    btn.classList.add('correct');
+                } else if (btn === e.target && !correct) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            setTimeout(() => {
+                document.getElementById('triviaModal').classList.remove('show');
+
+                if (correct) {
+                    // Move player forward
+                    if (player.position < 0) {
+                        player.position = 0;
+                    } else {
+                        player.position += gameState.pendingMove;
+                    }
+
+                    // Check if finished
+                    if (player.position >= PATH_LENGTH - 1) {
+                        player.finished = true;
+                        player.position = PATH_LENGTH - 1;
+
+                        if (gameState.currentTeam === 1) {
+                            gameState.team1Finished++;
+                        } else {
+                            gameState.team2Finished++;
+                        }
+
+                        updatePlayerPositions();
+                        updateUI();
+
+                        // Check for winner
+                        if (gameState.team1Finished >= 4 || gameState.team2Finished >= 4) {
+                            showWinner();
+                            return;
+                        }
+                    }
+
+                    updatePlayerPositions();
+                }
+
+                gameState.pendingMove = 0;
+                gameState.isRolling = false;
+                nextPlayer();
+            }, 1500);
+        }
+
+        function nextPlayer() {
+            const team = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
+            let nextIndex = gameState.currentPlayerIndex;
+            let attempts = 0;
+
+            // Find next unfinished player
+            do {
+                nextIndex = (nextIndex + 1) % team.length;
+                attempts++;
+            } while (team[nextIndex].finished && attempts < team.length);
+
+            // If all players in current team finished, switch teams
+            if (attempts >= team.length) {
+                gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
+                gameState.currentPlayerIndex = 0;
+                const newTeam = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
+                while (newTeam[gameState.currentPlayerIndex].finished) {
+                    gameState.currentPlayerIndex++;
+                }
+            } else if (nextIndex <= gameState.currentPlayerIndex) {
+                // Wrapped around, switch teams
+                gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
+                gameState.currentPlayerIndex = 0;
+                const newTeam = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
+                while (newTeam[gameState.currentPlayerIndex] && newTeam[gameState.currentPlayerIndex].finished) {
+                    gameState.currentPlayerIndex++;
+                }
+            } else {
+                gameState.currentPlayerIndex = nextIndex;
+            }
+
+            updateUI();
+            updateActionButton();
+        }
+
+        function updateActionButton() {
+            const player = getCurrentPlayer();
+            const button = document.getElementById('actionButton');
+
+            if (player.position < 0) {
+                button.textContent = '🎲 Roll to Escape';
+            } else {
+                button.textContent = '🎲 Roll to Move';
+            }
+        }
+
+        function showWinner() {
+            const winner = gameState.team1Finished >= 4 ? 'Team 1' : 'Team 2';
+            document.getElementById('winnerName').textContent = `${winner} Wins! 🎊`;
+            document.getElementById('winnerModal').classList.add('show');
+        }
+
+        function resetGame() {
+            gameState = {
+                currentTeam: 1,
+                currentPlayerIndex: 0,
+                team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}` })),
+                team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}` })),
+                team1Finished: 0,
+                team2Finished: 0,
+                isRolling: false,
+                currentQuestion: null,
+                pendingMove: 0
+            };
+
+            document.getElementById('winnerModal').classList.remove('show');
+            createHeartPath();
+            updateUI();
+            updateActionButton();
+        }
+
+        // Initialize the game
+        init();
+    </script>
+</body>
+
+</html>
