@@ -4942,10 +4942,10 @@
         let musicPlaying = false;
 
         function initMusic() {
-            // Create audio element with a space ambient loop
+            // Create audio element with custom music
             bgMusic = new Audio();
-            // Using a royalty-free space ambient music
-            bgMusic.src = 'https://cdn.pixabay.com/audio/2022/10/25/audio_3c7b4bb6b9.mp3';
+            // Using "Cold Air In My Lungs" from Suno
+            bgMusic.src = 'music.wav';
             bgMusic.loop = true;
             bgMusic.volume = 0.3;
             bgMusic.preload = 'auto';
