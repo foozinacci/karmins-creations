@@ -3318,6 +3318,11 @@
             const roll = Math.floor(Math.random() * 6) + 1;
             showDice(roll);
 
+            // Sync dice roll to other player
+            if (isMultiplayer && conn) {
+                conn.send({ type: 'diceRoll', data: { roll: roll } });
+            }
+
             setTimeout(() => {
                 button.classList.remove('rolling');
                 const team = gameState.currentTeam;
@@ -3331,10 +3336,28 @@
                     gameState.pendingMove = roll; // Store roll so player moves this many spaces on correct answer
                     updatePlayerPositions();
                     showTrivia();
+
+                    // Sync trivia to other player
+                    if (isMultiplayer && conn) {
+                        conn.send({
+                            type: 'showTrivia',
+                            data: {
+                                question: gameState.currentQuestion,
+                                questionCount: gameState.questionCount,
+                                pendingMove: gameState.pendingMove
+                            }
+                        });
+                        sendGameState();
+                    }
                 } else {
                     // Failed to escape, next player
                     gameState.isRolling = false;
                     nextPlayer();
+
+                    // Sync state after failed escape
+                    if (isMultiplayer && conn) {
+                        sendGameState();
+                    }
                 }
             }, 1200);
         }
@@ -3348,9 +3371,27 @@
             showDice(roll);
             gameState.pendingMove = roll;
 
+            // Sync dice roll to other player
+            if (isMultiplayer && conn) {
+                conn.send({ type: 'diceRoll', data: { roll: roll } });
+            }
+
             setTimeout(() => {
                 button.classList.remove('rolling');
                 showTrivia();
+
+                // Sync trivia to other player
+                if (isMultiplayer && conn) {
+                    conn.send({
+                        type: 'showTrivia',
+                        data: {
+                            question: gameState.currentQuestion,
+                            questionCount: gameState.questionCount,
+                            pendingMove: gameState.pendingMove
+                        }
+                    });
+                    sendGameState();
+                }
             }, 1200);
         }
 
