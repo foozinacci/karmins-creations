@@ -1579,6 +1579,85 @@
             color: rgba(255, 255, 255, 0.6);
             margin-top: 5px;
         }
+
+        /* Voice Recording Styles */
+        .voice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .voice-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .voice-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .voice-btn.listening {
+            animation: pulse-mic 1s infinite;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #ef4444;
+        }
+
+        @keyframes pulse-mic {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .voice-status {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .voice-status.heard {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .voice-status.matched {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .voice-status.no-match {
+            color: #f87171;
+        }
+
+        .voice-unsupported {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -1706,6 +1785,12 @@
             </div>
             <div class="answer-options" id="answerOptions">
                 <!-- Answers will be added via JavaScript -->
+            </div>
+            <div class="voice-container" id="voiceContainer">
+                <button class="voice-btn" id="voiceBtn" title="Click to speak your answer">
+                    🎤
+                </button>
+                <div class="voice-status" id="voiceStatus">Click mic to speak your answer</div>
             </div>
             <div class="question-counter" id="questionCounter">Question 1</div>
         </div>
@@ -2748,6 +2833,185 @@
             }).join('');
         }
 
+        // ==================== VOICE RECOGNITION ====================
+        let recognition = null;
+        let isListening = false;
+
+        function initVoiceRecognition() {
+            const voiceContainer = document.getElementById('voiceContainer');
+            const voiceBtn = document.getElementById('voiceBtn');
+            const voiceStatus = document.getElementById('voiceStatus');
+
+            // Check for browser support
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                voiceContainer.innerHTML = '<div class="voice-unsupported">🎤 Voice input not supported in this browser</div>';
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                isListening = true;
+                voiceBtn.classList.add('listening');
+                voiceBtn.textContent = '🔴';
+                voiceStatus.textContent = 'Listening...';
+                voiceStatus.className = 'voice-status';
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                voiceBtn.classList.remove('listening');
+                voiceBtn.textContent = '🎤';
+                if (voiceStatus.textContent === 'Listening...') {
+                    voiceStatus.textContent = 'Click mic to speak your answer';
+                }
+            };
+
+            recognition.onerror = (event) => {
+                isListening = false;
+                voiceBtn.classList.remove('listening');
+                voiceBtn.textContent = '🎤';
+                if (event.error === 'no-speech') {
+                    voiceStatus.textContent = 'No speech detected. Try again!';
+                } else {
+                    voiceStatus.textContent = 'Error: ' + event.error;
+                }
+                voiceStatus.className = 'voice-status no-match';
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = Array.from(event.results)
+                    .map(result => result[0].transcript)
+                    .join('')
+                    .toLowerCase()
+                    .trim();
+
+                voiceStatus.textContent = `Heard: "${transcript}"`;
+                voiceStatus.className = 'voice-status heard';
+
+                // Only process final results
+                if (event.results[event.results.length - 1].isFinal) {
+                    matchVoiceAnswer(transcript);
+                }
+            };
+
+            voiceBtn.addEventListener('click', toggleVoiceRecognition);
+        }
+
+        function toggleVoiceRecognition() {
+            if (!recognition) return;
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    // Already started, ignore
+                }
+            }
+        }
+
+        function matchVoiceAnswer(transcript) {
+            if (!gameState.currentQuestion) return;
+
+            const answers = gameState.currentQuestion.answers;
+            const voiceStatus = document.getElementById('voiceStatus');
+
+            // Normalize the transcript
+            const normalizedTranscript = transcript.toLowerCase().trim();
+
+            // Try to find a matching answer
+            let matchedIndex = -1;
+            let bestMatch = '';
+
+            for (let i = 0; i < answers.length; i++) {
+                const answer = answers[i].toLowerCase().trim();
+
+                // Exact match
+                if (normalizedTranscript === answer) {
+                    matchedIndex = i;
+                    bestMatch = answers[i];
+                    break;
+                }
+
+                // Check if transcript contains the answer
+                if (normalizedTranscript.includes(answer)) {
+                    matchedIndex = i;
+                    bestMatch = answers[i];
+                }
+
+                // Check if answer contains the transcript (for short answers)
+                if (answer.includes(normalizedTranscript) && normalizedTranscript.length >= 2) {
+                    matchedIndex = i;
+                    bestMatch = answers[i];
+                }
+
+                // Special handling for True/False questions
+                if ((normalizedTranscript === 'true' || normalizedTranscript === 'yes') && answer === 'true') {
+                    matchedIndex = i;
+                    bestMatch = answers[i];
+                    break;
+                }
+                if ((normalizedTranscript === 'false' || normalizedTranscript === 'no') && answer === 'false') {
+                    matchedIndex = i;
+                    bestMatch = answers[i];
+                    break;
+                }
+
+                // Number matching (for numeric answers)
+                const spokenNumbers = {
+                    'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5',
+                    'six': '6', 'seven': '7', 'eight': '8', 'nine': '9', 'ten': '10',
+                    'eleven': '11', 'twelve': '12', 'thirteen': '13', 'fourteen': '14',
+                    'fifteen': '15', 'twenty': '20', 'thirty': '30', 'fifty': '50',
+                    'hundred': '100', 'thousand': '1000'
+                };
+
+                let convertedTranscript = normalizedTranscript;
+                for (const [word, num] of Object.entries(spokenNumbers)) {
+                    convertedTranscript = convertedTranscript.replace(word, num);
+                }
+
+                if (convertedTranscript === answer || answer.includes(convertedTranscript)) {
+                    matchedIndex = i;
+                    bestMatch = answers[i];
+                }
+            }
+
+            if (matchedIndex !== -1) {
+                voiceStatus.textContent = `Matched: "${bestMatch}" ✓`;
+                voiceStatus.className = 'voice-status matched';
+
+                // Stop listening
+                if (recognition && isListening) {
+                    recognition.stop();
+                }
+
+                // Simulate clicking the answer button
+                setTimeout(() => {
+                    const answerButtons = document.querySelectorAll('.answer-option');
+                    if (answerButtons[matchedIndex]) {
+                        answerButtons[matchedIndex].click();
+                    }
+                }, 500);
+            } else {
+                voiceStatus.textContent = `"${transcript}" - No match found. Try again!`;
+                voiceStatus.className = 'voice-status no-match';
+            }
+        }
+
+        function stopVoiceRecognition() {
+            if (recognition && isListening) {
+                recognition.stop();
+            }
+        }
+
         // Initialize the game
         function init() {
             createStars();
@@ -2757,6 +3021,7 @@
             updateActionButton();
             setupEventListeners();
             setupLeaderboardListeners();
+            initVoiceRecognition();
         }
 
         init();
