@@ -8,6 +8,7 @@
     <meta name="description"
         content="A fun two-team trivia game where players race along a heart-shaped path to reach the glowing lightbulb!">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -2079,6 +2080,154 @@
                 opacity: 0;
             }
         }
+
+        /* Multiplayer Styles */
+        .multiplayer-modal {
+            background: linear-gradient(135deg, rgba(20, 10, 40, 0.98), rgba(40, 20, 60, 0.98));
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            box-shadow: 0 0 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .multiplayer-modal h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .room-code-display {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 10px;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .room-code-input {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 8px;
+            text-align: center;
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            margin: 15px 0;
+        }
+
+        .room-code-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .connection-status.waiting {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .connection-status.connected {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .connection-status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-dot.waiting {
+            background: #fbbf24;
+        }
+
+        .status-dot.connected {
+            background: #22c55e;
+            animation: none;
+        }
+
+        .multiplayer-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(102, 126, 234, 0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .multiplayer-indicator.show {
+            display: flex;
+        }
+
+        .mp-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .mp-btn.host {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .mp-btn.join {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .mp-btn.back {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .mp-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 
@@ -2093,9 +2242,58 @@
                 <button class="age-btn teens" data-age="teens">🧒 Tweens (11-13 years) - Medium Mode</button>
                 <button class="age-btn adults" data-age="adults">👨 Teens+ (14+ years) - Hard Mode</button>
             </div>
-            <button class="feedback-btn" onclick="showCustomization()" style="margin-top: 20px;">🎨 Customize Teams
-                First</button>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="feedback-btn" onclick="showCustomization()" style="flex: 1;">🎨 Customize Teams</button>
+                <button class="feedback-btn" onclick="showMultiplayerMenu()" style="flex: 1;">🌐 Multiplayer</button>
+            </div>
         </div>
+    </div>
+
+    <!-- Multiplayer Menu Modal -->
+    <div class="modal-overlay" id="multiplayerMenuModal">
+        <div class="multiplayer-modal">
+            <h2>🌐 Multiplayer Mode</h2>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px;">Play with friends on different devices!</p>
+            <button class="mp-btn host" onclick="hostGame()">🏠 Host a Game</button>
+            <button class="mp-btn join" onclick="showJoinGame()">🔗 Join a Game</button>
+            <button class="mp-btn back" onclick="closeMultiplayerMenu()">← Back</button>
+        </div>
+    </div>
+
+    <!-- Host Game Modal -->
+    <div class="modal-overlay" id="hostGameModal">
+        <div class="multiplayer-modal">
+            <h2>🏠 Hosting Game</h2>
+            <p style="color: rgba(255,255,255,0.7);">Share this code with your friend:</p>
+            <div class="room-code-display" id="roomCodeDisplay">----</div>
+            <div class="connection-status waiting" id="hostStatus">
+                <div class="status-dot waiting"></div>
+                <span>Waiting for player to join...</span>
+            </div>
+            <button class="mp-btn back" onclick="cancelHost()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Join Game Modal -->
+    <div class="modal-overlay" id="joinGameModal">
+        <div class="multiplayer-modal">
+            <h2>🔗 Join a Game</h2>
+            <p style="color: rgba(255,255,255,0.7);">Enter the room code from your friend:</p>
+            <input type="text" class="room-code-input" id="joinCodeInput" placeholder="XXXX" maxlength="4"
+                oninput="this.value = this.value.toUpperCase()">
+            <div class="connection-status" id="joinStatus" style="display: none;">
+                <div class="status-dot"></div>
+                <span id="joinStatusText">Connecting...</span>
+            </div>
+            <button class="mp-btn join" onclick="joinGame()">Connect</button>
+            <button class="mp-btn back" onclick="closeJoinGame()">← Back</button>
+        </div>
+    </div>
+
+    <!-- Multiplayer Indicator -->
+    <div class="multiplayer-indicator" id="multiplayerIndicator">
+        <div class="status-dot connected"></div>
+        <span id="mpIndicatorText">Connected</span>
     </div>
 
     <!-- Team Escape Overlay -->
@@ -3994,6 +4192,268 @@
             updateUI();
             showVoiceBubble('✅ Team customization saved!');
         }
+
+        // ==================== P2P MULTIPLAYER ====================
+        let peer = null;
+        let conn = null;
+        let isHost = false;
+        let isMultiplayer = false;
+        let roomCode = '';
+
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 4; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        function showMultiplayerMenu() {
+            document.getElementById('multiplayerMenuModal').classList.add('show');
+        }
+
+        function closeMultiplayerMenu() {
+            document.getElementById('multiplayerMenuModal').classList.remove('show');
+        }
+
+        function hostGame() {
+            closeMultiplayerMenu();
+            document.getElementById('hostGameModal').classList.add('show');
+
+            roomCode = generateRoomCode();
+            document.getElementById('roomCodeDisplay').textContent = roomCode;
+
+            // Create peer with room code as ID
+            peer = new Peer('rof-' + roomCode);
+
+            peer.on('open', (id) => {
+                console.log('Host ready with ID:', id);
+            });
+
+            peer.on('connection', (connection) => {
+                conn = connection;
+                isHost = true;
+                isMultiplayer = true;
+
+                conn.on('open', () => {
+                    console.log('Guest connected!');
+                    document.getElementById('hostStatus').className = 'connection-status connected';
+                    document.getElementById('hostStatus').innerHTML = '<div class="status-dot connected"></div><span>Player connected! Starting game...</span>';
+
+                    // Send initial game state
+                    sendGameState();
+
+                    // Start game after short delay
+                    setTimeout(() => {
+                        document.getElementById('hostGameModal').classList.remove('show');
+                        document.getElementById('ageModal').classList.remove('show');
+                        showMultiplayerIndicator('Host - Connected');
+                        showVoiceBubble('🎮 Multiplayer game started!');
+                    }, 1500);
+                });
+
+                conn.on('data', (data) => {
+                    handleIncomingData(data);
+                });
+
+                conn.on('close', () => {
+                    handleDisconnect();
+                });
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer error:', err);
+                document.getElementById('hostStatus').className = 'connection-status error';
+                document.getElementById('hostStatus').innerHTML = '<div class="status-dot"></div><span>Error: ' + err.type + '</span>';
+            });
+        }
+
+        function cancelHost() {
+            if (peer) {
+                peer.destroy();
+                peer = null;
+            }
+            document.getElementById('hostGameModal').classList.remove('show');
+            document.getElementById('hostStatus').className = 'connection-status waiting';
+            document.getElementById('hostStatus').innerHTML = '<div class="status-dot waiting"></div><span>Waiting for player to join...</span>';
+        }
+
+        function showJoinGame() {
+            closeMultiplayerMenu();
+            document.getElementById('joinGameModal').classList.add('show');
+            document.getElementById('joinCodeInput').value = '';
+            document.getElementById('joinStatus').style.display = 'none';
+        }
+
+        function closeJoinGame() {
+            if (peer) {
+                peer.destroy();
+                peer = null;
+            }
+            document.getElementById('joinGameModal').classList.remove('show');
+        }
+
+        function joinGame() {
+            const code = document.getElementById('joinCodeInput').value.toUpperCase().trim();
+            if (code.length !== 4) {
+                showVoiceBubble('Please enter a 4-character room code');
+                return;
+            }
+
+            const joinStatus = document.getElementById('joinStatus');
+            const joinStatusText = document.getElementById('joinStatusText');
+            const statusDot = joinStatus.querySelector('.status-dot');
+
+            joinStatus.style.display = 'flex';
+            joinStatus.className = 'connection-status waiting';
+            statusDot.className = 'status-dot waiting';
+            joinStatusText.textContent = 'Connecting...';
+
+            // Create peer and connect to host
+            peer = new Peer();
+
+            peer.on('open', () => {
+                conn = peer.connect('rof-' + code);
+
+                conn.on('open', () => {
+                    isHost = false;
+                    isMultiplayer = true;
+                    roomCode = code;
+
+                    joinStatus.className = 'connection-status connected';
+                    statusDot.className = 'status-dot connected';
+                    joinStatusText.textContent = 'Connected! Loading game...';
+
+                    setTimeout(() => {
+                        document.getElementById('joinGameModal').classList.remove('show');
+                        document.getElementById('ageModal').classList.remove('show');
+                        showMultiplayerIndicator('Guest - Connected');
+                        showVoiceBubble('🎮 Joined multiplayer game!');
+                    }, 1500);
+                });
+
+                conn.on('data', (data) => {
+                    handleIncomingData(data);
+                });
+
+                conn.on('close', () => {
+                    handleDisconnect();
+                });
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer error:', err);
+                joinStatus.className = 'connection-status error';
+                statusDot.className = 'status-dot';
+                if (err.type === 'peer-unavailable') {
+                    joinStatusText.textContent = 'Room not found. Check the code.';
+                } else {
+                    joinStatusText.textContent = 'Error: ' + err.type;
+                }
+            });
+        }
+
+        function showMultiplayerIndicator(text) {
+            const indicator = document.getElementById('multiplayerIndicator');
+            document.getElementById('mpIndicatorText').textContent = text;
+            indicator.classList.add('show');
+        }
+
+        function handleDisconnect() {
+            isMultiplayer = false;
+            document.getElementById('multiplayerIndicator').classList.remove('show');
+            showVoiceBubble('⚠️ Disconnected from game');
+
+            if (peer) {
+                peer.destroy();
+                peer = null;
+            }
+            conn = null;
+        }
+
+        function sendGameState() {
+            if (!conn || !isMultiplayer) return;
+
+            conn.send({
+                type: 'gameState',
+                data: {
+                    gameState: gameState,
+                    gameStats: gameStats,
+                    ageMode: ageMode
+                }
+            });
+        }
+
+        function sendAction(action, data) {
+            if (!conn || !isMultiplayer) return;
+
+            conn.send({
+                type: action,
+                data: data
+            });
+        }
+
+        function handleIncomingData(message) {
+            console.log('Received:', message);
+
+            switch (message.type) {
+                case 'gameState':
+                    // Sync game state (for guests)
+                    if (!isHost) {
+                        gameState = message.data.gameState;
+                        gameStats = message.data.gameStats;
+                        ageMode = message.data.ageMode;
+                        renderPlayers();
+                        updateUI();
+                        updatePlayerPositions();
+                    }
+                    break;
+
+                case 'diceRoll':
+                    // Show dice animation
+                    showDice(message.data.roll);
+                    break;
+
+                case 'showTrivia':
+                    // Display trivia question
+                    gameState.currentQuestion = message.data.question;
+                    gameState.questionCount = message.data.questionCount;
+                    gameState.pendingMove = message.data.pendingMove;
+                    displayTriviaQuestion();
+                    break;
+
+                case 'answer':
+                    // Someone answered
+                    gameState = message.data.gameState;
+                    gameStats = message.data.gameStats;
+                    renderPlayers();
+                    updateUI();
+                    updatePlayerPositions();
+                    break;
+
+                case 'playerFinish':
+                    showPlayerFinishCelebration(message.data.player);
+                    break;
+
+                case 'winner':
+                    showWinner();
+                    break;
+            }
+        }
+
+        // Override key functions to sync in multiplayer
+        const originalHandleAnswer = handleAnswer;
+        handleAnswer = function (e) {
+            originalHandleAnswer.call(this, e);
+
+            // Sync state after answer
+            if (isMultiplayer && isHost) {
+                setTimeout(() => {
+                    sendGameState();
+                }, 100);
+            }
+        };
 
         // Initialize the game
         function init() {
