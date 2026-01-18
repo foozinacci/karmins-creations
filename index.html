@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Trail Trivia 💡</title>
+    <title>Ring of Facts 💡</title>
     <meta name="description"
         content="A fun two-team trivia game where players race along a heart-shaped path to reach the glowing lightbulb!">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,10 +17,14 @@
 
         body {
             font-family: 'Outfit', sans-serif;
-            min-height: 100vh;
+            height: 100vh;
             background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            overflow-x: hidden;
+            overflow: hidden;
             color: white;
+        }
+
+        html {
+            overflow: hidden;
         }
 
         /* Animated stars background */
@@ -58,12 +62,311 @@
             }
         }
 
-        /* Header */
+        /* Shooting Stars - Multiple Directions */
+        .shooting-star {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+            opacity: 0;
+        }
+
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5), transparent);
+            transform: translateX(-100%);
+            top: 50%;
+            right: 0;
+            margin-top: -1.5px;
+        }
+
+        .shooting-star.dir-se {
+            animation: shootSE 0.8s linear forwards;
+        }
+
+        .shooting-star.dir-sw {
+            animation: shootSW 0.8s linear forwards;
+        }
+
+        .shooting-star.dir-s {
+            animation: shootS 0.6s linear forwards;
+        }
+
+        @keyframes shootSE {
+            0% {
+                opacity: 1;
+                transform: rotate(-45deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(500px, 500px) rotate(-45deg);
+            }
+        }
+
+        @keyframes shootSW {
+            0% {
+                opacity: 1;
+                transform: rotate(-135deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-500px, 500px) rotate(-135deg);
+            }
+        }
+
+        @keyframes shootS {
+            0% {
+                opacity: 1;
+                transform: rotate(-90deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(0, 600px) rotate(-90deg);
+            }
+        }
+
+        /* Moon */
+        .moon {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5f5dc 0%, #ffd700 50%, #daa520 100%);
+            box-shadow:
+                0 0 30px rgba(255, 215, 0, 0.5),
+                0 0 60px rgba(255, 215, 0, 0.4),
+                0 0 90px rgba(255, 215, 0, 0.3),
+                inset -15px -8px 30px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+        }
+
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 18px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 50px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        /* Floating Astronauts */
+        .astronaut {
+            position: fixed;
+            font-size: 2.5rem;
+            z-index: 3;
+            opacity: 0.9;
+        }
+
+        .astronaut:nth-child(1) {
+            animation: drift1 20s linear infinite;
+        }
+
+        .astronaut:nth-child(2) {
+            animation: drift2 25s linear infinite;
+        }
+
+        .astronaut:nth-child(3) {
+            animation: drift3 22s linear infinite;
+        }
+
+        .astronaut:nth-child(4) {
+            animation: drift4 18s linear infinite;
+        }
+
+        .astronaut:nth-child(5) {
+            animation: drift5 28s linear infinite;
+        }
+
+        .astronaut:nth-child(6) {
+            animation: drift6 24s linear infinite;
+        }
+
+        @keyframes drift1 {
+            0% {
+                top: 20%;
+                left: -5%;
+                transform: rotate(0deg);
+            }
+
+            50% {
+                top: 70%;
+                left: 50%;
+                transform: rotate(180deg);
+            }
+
+            100% {
+                top: 20%;
+                left: 105%;
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes drift2 {
+            0% {
+                top: 80%;
+                right: -5%;
+                transform: rotate(0deg) scaleX(-1);
+            }
+
+            50% {
+                top: 30%;
+                right: 50%;
+                transform: rotate(-180deg) scaleX(-1);
+            }
+
+            100% {
+                top: 80%;
+                right: 105%;
+                transform: rotate(-360deg) scaleX(-1);
+            }
+        }
+
+        @keyframes drift3 {
+            0% {
+                bottom: 10%;
+                left: 30%;
+                transform: rotate(0deg);
+            }
+
+            25% {
+                bottom: 40%;
+                left: 10%;
+                transform: rotate(90deg);
+            }
+
+            50% {
+                bottom: 70%;
+                left: 30%;
+                transform: rotate(180deg);
+            }
+
+            75% {
+                bottom: 40%;
+                left: 50%;
+                transform: rotate(270deg);
+            }
+
+            100% {
+                bottom: 10%;
+                left: 30%;
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes drift4 {
+            0% {
+                top: 50%;
+                left: -5%;
+                transform: rotate(-20deg);
+            }
+
+            100% {
+                top: 30%;
+                left: 105%;
+                transform: rotate(340deg);
+            }
+        }
+
+        @keyframes drift5 {
+            0% {
+                top: 10%;
+                right: 20%;
+                transform: rotate(0deg) scaleX(-1);
+            }
+
+            50% {
+                top: 85%;
+                right: 60%;
+                transform: rotate(180deg) scaleX(-1);
+            }
+
+            100% {
+                top: 10%;
+                right: 20%;
+                transform: rotate(360deg) scaleX(-1);
+            }
+        }
+
+        @keyframes drift6 {
+            0% {
+                bottom: 5%;
+                right: -5%;
+                transform: rotate(0deg);
+            }
+
+            50% {
+                bottom: 50%;
+                right: 40%;
+                transform: rotate(180deg);
+            }
+
+            100% {
+                bottom: 5%;
+                right: 105%;
+                transform: rotate(360deg);
+            }
+        }
+
         .header {
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             position: relative;
             z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header h1 .bulb {
+            font-size: 1.5rem;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px #ffd700);
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px #ffd700);
+            }
+        }
+
+        .header p {
+            display: none;
         }
 
         .header h1 {
@@ -103,29 +406,79 @@
         /* Game Status Bar */
         .status-bar {
             text-align: center;
-            padding: 10px 20px;
+            padding: 8px 20px;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            margin: 0 auto 20px;
-            max-width: 600px;
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            margin: 0 auto 10px;
+            max-width: 500px;
             position: relative;
             z-index: 10;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .status-bar .current-turn {
-            font-weight: 600;
+        .status-bar .team-indicator {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
         }
 
-        .status-bar .player-dot {
-            width: 12px;
-            height: 12px;
+        .status-bar .team-indicator.team1 {
+            color: #4ade80;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+
+        .status-bar .team-indicator.team2 {
+            color: #f472b6;
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+        }
+
+        .status-bar .player-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .status-bar .player-avatar-large {
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 0 10px currentColor;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .status-bar .player-name-large {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .status-bar .roll-hint {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 2px;
         }
 
         /* Main Game Container */
@@ -133,20 +486,21 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding: 0 20px;
+            padding: 0 80px;
             position: relative;
             z-index: 10;
-            gap: 20px;
+            gap: 40px;
         }
 
         /* Team Panels */
         .team-panel {
-            width: 220px;
+            width: 180px;
             border-radius: 20px;
-            padding: 20px;
+            padding: 15px;
             backdrop-filter: blur(15px);
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .team-panel::before {
@@ -296,58 +650,58 @@
 
         .heart-container {
             position: relative;
-            width: 450px;
-            height: 420px;
+            width: 520px;
+            height: 480px;
         }
 
         /* Finish Zones */
         .finish-zone {
             position: absolute;
-            width: 70px;
-            height: 70px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 5;
+            z-index: 15;
         }
 
         .finish-zone.finish1 {
-            top: 0;
-            left: 80px;
-            background: radial-gradient(circle, rgba(34, 197, 94, 0.3), transparent);
-            border: 3px solid rgba(34, 197, 94, 0.6);
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+            top: 20px;
+            left: 70px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.4), transparent);
+            border: 4px solid rgba(34, 197, 94, 0.8);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
         }
 
         .finish-zone.finish2 {
-            top: 0;
-            right: 80px;
-            background: radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent);
-            border: 3px solid rgba(236, 72, 153, 0.6);
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+            top: 20px;
+            right: 70px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.4), transparent);
+            border: 4px solid rgba(236, 72, 153, 0.8);
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
         }
 
         .finish-label {
-            font-size: 0.65rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-top: 5px;
+            margin-top: 8px;
         }
 
         .finish-slots {
             display: flex;
-            gap: 4px;
+            gap: 6px;
         }
 
         .finish-slot {
-            width: 12px;
-            height: 12px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
 
         .finish-slot.filled {
@@ -445,8 +799,15 @@
         }
 
         /* Action Button */
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
         .action-button {
-            margin-top: 20px;
             padding: 15px 40px;
             font-size: 1.1rem;
             font-weight: 700;
@@ -460,6 +821,8 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
+            position: relative;
+            z-index: 100;
         }
 
         .action-button:hover {
@@ -473,6 +836,33 @@
 
         .action-button.rolling {
             animation: shake 0.5s ease-in-out;
+        }
+
+        .trivia-button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .trivia-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        .trivia-button:active {
+            transform: translateY(0);
         }
 
         @keyframes shake {
@@ -587,6 +977,113 @@
             margin-top: 5px;
         }
 
+        /* Timer Bar */
+        .timer-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+            width: 100%;
+        }
+
+        .timer-bar.warning {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .timer-bar.danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            animation: pulse-danger 0.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-danger {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .timer-text {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .timer-text.warning {
+            color: #fbbf24;
+        }
+
+        .timer-text.danger {
+            color: #ef4444;
+            animation: shake-timer 0.3s ease-in-out infinite;
+        }
+
+        @keyframes shake-timer {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-2px);
+            }
+
+            75% {
+                transform: translateX(2px);
+            }
+        }
+
+        /* Special Question Badge */
+        .special-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #ffd700, #ff6b6b);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1e1b4b;
+            margin-bottom: 15px;
+            animation: special-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes special-glow {
+            from {
+                box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            }
+
+            to {
+                box-shadow: 0 0 25px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 107, 107, 0.4);
+            }
+        }
+
+        .question-counter {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 8px;
+        }
+
         .question-text {
             font-size: 1.2rem;
             font-weight: 600;
@@ -670,6 +1167,106 @@
             color: #ffd700;
         }
 
+        /* Player Finish Celebration */
+        .finish-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            pointer-events: none;
+        }
+
+        .finish-celebration.show {
+            display: flex;
+            animation: screenFlash 0.5s ease-out;
+        }
+
+        @keyframes screenFlash {
+            0% {
+                background: rgba(255, 215, 0, 0.8);
+            }
+
+            100% {
+                background: transparent;
+            }
+        }
+
+        .finish-message {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-radius: 24px;
+            padding: 40px 60px;
+            text-align: center;
+            border: 3px solid rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
+            animation: celebrateIn 0.5s ease-out;
+            pointer-events: auto;
+        }
+
+        @keyframes celebrateIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-10deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .finish-message .celebrate-emoji {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: bounce 0.6s ease infinite;
+        }
+
+        .finish-message h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ff6b6b, #48dbfb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .finish-message .player-finished-name {
+            font-size: 1.5rem;
+            color: #ffd700;
+            font-weight: 700;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 2001;
+            animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
         .play-again-btn {
             padding: 15px 40px;
             font-size: 1.1rem;
@@ -688,6 +1285,300 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
         }
+
+        /* Leaderboard Button */
+        .leaderboard-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leaderboard-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Leaderboard Modal */
+        .leaderboard-modal {
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.98), rgba(49, 46, 129, 0.98));
+            border-radius: 24px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .leaderboard-header h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .leaderboard-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .leaderboard-tab {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-tab.active {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+        }
+
+        .leaderboard-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .leaderboard-content {
+            display: none;
+        }
+
+        .leaderboard-content.active {
+            display: block;
+        }
+
+        .leaderboard-team-section {
+            margin-bottom: 25px;
+        }
+
+        .leaderboard-team-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-team-title.team1 {
+            color: #fbbf24;
+        }
+
+        .leaderboard-team-title.team2 {
+            color: #f472b6;
+        }
+
+        .leaderboard-player-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-player-row:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .leaderboard-rank {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            margin-right: 12px;
+        }
+
+        .leaderboard-rank.gold {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #1e1b4b;
+        }
+
+        .leaderboard-rank.silver {
+            background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+            color: #1e1b4b;
+        }
+
+        .leaderboard-rank.bronze {
+            background: linear-gradient(135deg, #cd7f32, #b8860b);
+            color: white;
+        }
+
+        .leaderboard-rank.normal {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .leaderboard-player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-right: 12px;
+            color: white;
+        }
+
+        .leaderboard-player-info {
+            flex: 1;
+        }
+
+        .leaderboard-player-name {
+            font-weight: 700;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .leaderboard-player-status {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .leaderboard-player-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+        }
+
+        .stat-correct {
+            color: #4ade80;
+        }
+
+        .stat-wrong {
+            color: #f87171;
+        }
+
+        .stat-score {
+            color: #fbbf24;
+        }
+
+        .leaderboard-player-finished {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .leaderboard-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .leaderboard-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .overall-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .overall-stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .overall-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .overall-stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -695,19 +1586,33 @@
     <!-- Animated Stars Background -->
     <div class="stars" id="stars"></div>
 
+    <!-- Moon -->
+    <div class="moon"></div>
+
+    <!-- Floating Astronauts -->
+    <div class="astronaut">🧑‍🚀</div>
+    <div class="astronaut">👨‍🚀</div>
+    <div class="astronaut">👩‍🚀</div>
+    <div class="astronaut">🚀</div>
+    <div class="astronaut">🧑‍🚀</div>
+    <div class="astronaut">🛸</div>
+
     <!-- Header -->
     <header class="header">
-        <h1><span class="bulb">💡</span> Heart Trail Trivia <span class="bulb">💡</span></h1>
+        <h1><span class="bulb">💡</span> Ring of Facts <span class="bulb">💡</span></h1>
         <p>Answer trivia questions to reach the glowing lightbulb!</p>
     </header>
 
     <!-- Status Bar -->
     <div class="status-bar">
-        <div class="current-turn">
-            <span>Team 1</span>
-            <span class="player-dot" style="background: #3b82f6;"></span>
-            <span>- <strong id="currentPlayerName">Blue Runner</strong>: Roll ODD (1, 3, 5) to escape!</span>
+        <div class="team-indicator team1" id="teamIndicator">
+            ⭐ TEAM 1's TURN ⭐
         </div>
+        <div class="player-info">
+            <div class="player-avatar-large" id="currentPlayerAvatar" style="background: #3b82f6; color: white;">B</div>
+            <span class="player-name-large" id="currentPlayerName">Blue Runner</span>
+        </div>
+        <div class="roll-hint" id="rollHint">Roll ODD (1, 3, 5) to escape the start!</div>
     </div>
 
     <!-- Main Game Container -->
@@ -754,19 +1659,16 @@
                 <div class="center-lightbulb">💡</div>
 
                 <!-- Path circles will be generated via JavaScript -->
-
-                <!-- Start Position -->
-                <div class="start-position">
-                    <div class="start-circle">🎲</div>
-                    <div class="start-label">Start</div>
-                </div>
             </div>
 
             <!-- Dice Display -->
             <div class="dice-display" id="diceDisplay">🎲</div>
 
-            <!-- Action Button -->
-            <button class="action-button" id="actionButton">🎲 Roll to Escape</button>
+            <!-- Action Buttons -->
+            <div class="button-container">
+                <button class="action-button" id="actionButton">🎲 Roll to Escape</button>
+                <button class="trivia-button" id="triviaButton">🧠 Trivia Question</button>
+            </div>
         </div>
 
         <!-- Team 2 Panel -->
@@ -791,6 +1693,13 @@
             <div class="modal-header">
                 <h3>🧠 Trivia Time!</h3>
                 <p id="triviaPlayerName">Player Name - Answer correctly to move forward!</p>
+                <div class="special-badge" id="specialBadge" style="display: none;">
+                    ⭐ SPECIAL QUESTION ⭐
+                </div>
+            </div>
+            <div class="timer-text" id="timerText">⏱️ <span id="timerSeconds">30</span>s</div>
+            <div class="timer-container">
+                <div class="timer-bar" id="timerBar"></div>
             </div>
             <div class="question-text" id="questionText">
                 What is the capital of France?
@@ -798,6 +1707,16 @@
             <div class="answer-options" id="answerOptions">
                 <!-- Answers will be added via JavaScript -->
             </div>
+            <div class="question-counter" id="questionCounter">Question 1</div>
+        </div>
+    </div>
+
+    <!-- Player Finish Celebration -->
+    <div class="finish-celebration" id="finishCelebration">
+        <div class="finish-message">
+            <div class="celebrate-emoji">🎉💡🎉</div>
+            <h2>REACHED THE END!</h2>
+            <div class="player-finished-name" id="finishedPlayerName">Player Name</div>
         </div>
     </div>
 
@@ -811,9 +1730,77 @@
         </div>
     </div>
 
+    <!-- Leaderboard Button -->
+    <button class="leaderboard-btn" id="leaderboardBtn">
+        🏆 Leaderboard
+    </button>
+
+    <!-- Leaderboard Modal -->
+    <div class="modal-overlay" id="leaderboardModal">
+        <div class="leaderboard-modal" style="position: relative;">
+            <button class="leaderboard-close-btn" id="leaderboardCloseBtn">×</button>
+            <div class="leaderboard-header">
+                <h3>🏆 Game Leaderboard</h3>
+                <p>Track player performance and stats</p>
+            </div>
+
+            <!-- Overall Stats -->
+            <div class="overall-stats" id="overallStats">
+                <div class="overall-stat-card">
+                    <div class="overall-stat-value" id="totalQuestions">0</div>
+                    <div class="overall-stat-label">Questions Asked</div>
+                </div>
+                <div class="overall-stat-card">
+                    <div class="overall-stat-value" id="totalCorrect">0</div>
+                    <div class="overall-stat-label">Total Correct</div>
+                </div>
+                <div class="overall-stat-card">
+                    <div class="overall-stat-value" id="totalWrong">0</div>
+                    <div class="overall-stat-label">Total Wrong</div>
+                </div>
+                <div class="overall-stat-card">
+                    <div class="overall-stat-value" id="accuracyRate">0%</div>
+                    <div class="overall-stat-label">Accuracy Rate</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="leaderboard-tabs">
+                <button class="leaderboard-tab active" data-tab="all">All Players</button>
+                <button class="leaderboard-tab" data-tab="team1">⭐ Team 1</button>
+                <button class="leaderboard-tab" data-tab="team2">💫 Team 2</button>
+            </div>
+
+            <!-- All Players Content -->
+            <div class="leaderboard-content active" id="leaderboardAll">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- Team 1 Content -->
+            <div class="leaderboard-content" id="leaderboardTeam1">
+                <div class="leaderboard-team-section">
+                    <div class="leaderboard-team-title team1">⭐ Team 1 Players</div>
+                    <div id="team1Leaderboard">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team 2 Content -->
+            <div class="leaderboard-content" id="leaderboardTeam2">
+                <div class="leaderboard-team-section">
+                    <div class="leaderboard-team-title team2">💫 Team 2 Players</div>
+                    <div id="team2Leaderboard">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==================== GAME CONFIGURATION ====================
-        const PATH_LENGTH = 20;
+        const PATH_LENGTH = 14; // Reduced to prevent overlap
 
         const TEAM1_PLAYERS = [
             { name: 'Blue Runner', color: '#3b82f6', emoji: '🔵' },
@@ -830,53 +1817,136 @@
         ];
 
         const TRIVIA_QUESTIONS = [
-            { question: "What is the capital of France?", answers: ["Paris", "London", "Berlin", "Madrid"], correct: 0 },
+            // Math - 5th/6th Grade Level
+            { question: "What is 3/4 + 1/4?", answers: ["1/2", "2/4", "1", "3/4"], correct: 2 },
+            { question: "What is 15% of 200?", answers: ["15", "20", "30", "35"], correct: 2 },
+            { question: "What is 7 × 8?", answers: ["54", "56", "58", "64"], correct: 1 },
+            { question: "What is the square root of 64?", answers: ["6", "7", "8", "9"], correct: 2 },
+            { question: "What is 3² + 4²?", answers: ["7", "12", "25", "49"], correct: 2 },
+            { question: "What is 0.5 × 0.5?", answers: ["0.1", "0.25", "0.5", "1"], correct: 1 },
+            { question: "What is 144 ÷ 12?", answers: ["10", "11", "12", "13"], correct: 2 },
+            { question: "What is 2/3 of 18?", answers: ["6", "9", "12", "15"], correct: 2 },
+            { question: "What is -5 + 12?", answers: ["7", "-7", "17", "-17"], correct: 0 },
+            { question: "What is 1000 in Roman numerals?", answers: ["C", "D", "M", "L"], correct: 2 },
+
+            // Science - 5th/6th Grade Level
             { question: "Which planet is known as the Red Planet?", answers: ["Venus", "Mars", "Jupiter", "Saturn"], correct: 1 },
-            { question: "What is 7 × 8?", answers: ["54", "56", "58", "62"], correct: 1 },
-            { question: "Who painted the Mona Lisa?", answers: ["Van Gogh", "Picasso", "Da Vinci", "Rembrandt"], correct: 2 },
-            { question: "What is the largest ocean?", answers: ["Atlantic", "Indian", "Arctic", "Pacific"], correct: 3 },
+            { question: "What gas do plants absorb from the air?", answers: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], correct: 2 },
+            { question: "What is the smallest unit of life?", answers: ["Atom", "Cell", "Molecule", "Organ"], correct: 1 },
+            { question: "What force keeps us on the ground?", answers: ["Magnetism", "Friction", "Gravity", "Inertia"], correct: 2 },
+            { question: "How many bones are in the adult human body?", answers: ["106", "156", "206", "256"], correct: 2 },
+            { question: "What is H₂O?", answers: ["Hydrogen", "Helium", "Water", "Oxygen"], correct: 2 },
+            { question: "Which organ pumps blood through your body?", answers: ["Brain", "Lungs", "Heart", "Liver"], correct: 2 },
+            { question: "What layer of Earth do we live on?", answers: ["Core", "Mantle", "Crust", "Magma"], correct: 2 },
+            { question: "What is the closest star to Earth?", answers: ["Proxima Centauri", "Sirius", "The Sun", "Polaris"], correct: 2 },
+            { question: "What type of rock forms from cooled lava?", answers: ["Sedimentary", "Metamorphic", "Igneous", "Limestone"], correct: 2 },
+
+            // Geography - 5th/6th Grade Level
+            { question: "What is the largest ocean on Earth?", answers: ["Atlantic", "Indian", "Pacific", "Arctic"], correct: 2 },
+            { question: "What is the capital of the United States?", answers: ["New York", "Los Angeles", "Washington D.C.", "Chicago"], correct: 2 },
+            { question: "Which continent is the Sahara Desert on?", answers: ["Asia", "Africa", "Australia", "South America"], correct: 1 },
+            { question: "What is the longest river in the world?", answers: ["Amazon", "Nile", "Mississippi", "Yangtze"], correct: 1 },
             { question: "How many continents are there?", answers: ["5", "6", "7", "8"], correct: 2 },
-            { question: "What is the chemical symbol for gold?", answers: ["Go", "Gd", "Au", "Ag"], correct: 2 },
-            { question: "Which animal is the fastest?", answers: ["Lion", "Cheetah", "Horse", "Falcon"], correct: 1 },
+            { question: "What country has the largest population?", answers: ["USA", "India", "China", "Russia"], correct: 2 },
+            { question: "What mountain is the tallest in the world?", answers: ["K2", "Kilimanjaro", "Mount Everest", "Denali"], correct: 2 },
+            { question: "What ocean is between the USA and Europe?", answers: ["Pacific", "Indian", "Atlantic", "Arctic"], correct: 2 },
+
+            // History & Social Studies - 5th/6th Grade Level
+            { question: "Who was the first President of the United States?", answers: ["Abraham Lincoln", "George Washington", "Thomas Jefferson", "John Adams"], correct: 1 },
+            { question: "In what year did the Titanic sink?", answers: ["1905", "1912", "1920", "1935"], correct: 1 },
+            { question: "What document starts with 'We the People'?", answers: ["Declaration of Independence", "Bill of Rights", "Constitution", "Magna Carta"], correct: 2 },
+            { question: "Who invented the light bulb?", answers: ["Benjamin Franklin", "Nikola Tesla", "Thomas Edison", "Alexander Bell"], correct: 2 },
+            { question: "What ancient civilization built pyramids?", answers: ["Romans", "Greeks", "Egyptians", "Mayans"], correct: 2 },
+            { question: "How many stripes are on the American flag?", answers: ["11", "12", "13", "15"], correct: 2 },
             { question: "What year did World War II end?", answers: ["1943", "1944", "1945", "1946"], correct: 2 },
-            { question: "What is the smallest prime number?", answers: ["0", "1", "2", "3"], correct: 2 },
-            { question: "Which country has the most people?", answers: ["USA", "India", "China", "Russia"], correct: 2 },
-            { question: "What is H2O commonly known as?", answers: ["Oxygen", "Hydrogen", "Water", "Salt"], correct: 2 },
-            { question: "How many legs does a spider have?", answers: ["6", "8", "10", "12"], correct: 1 },
-            { question: "What is the largest mammal?", answers: ["Elephant", "Blue Whale", "Giraffe", "Hippo"], correct: 1 },
-            { question: "Which instrument has 88 keys?", answers: ["Guitar", "Violin", "Piano", "Drums"], correct: 2 }
+            { question: "Who wrote the Declaration of Independence?", answers: ["George Washington", "Benjamin Franklin", "Thomas Jefferson", "John Adams"], correct: 2 },
+
+            // Language Arts - 5th/6th Grade Level
+            { question: "What is a noun?", answers: ["Action word", "Describing word", "Person, place, or thing", "Joining word"], correct: 2 },
+            { question: "What is the plural of 'child'?", answers: ["Childs", "Children", "Childen", "Childes"], correct: 1 },
+            { question: "What is a synonym for 'happy'?", answers: ["Sad", "Angry", "Joyful", "Tired"], correct: 2 },
+            { question: "What punctuation ends a question?", answers: ["Period", "Exclamation mark", "Question mark", "Comma"], correct: 2 },
+            { question: "What is the past tense of 'run'?", answers: ["Runned", "Running", "Ran", "Runs"], correct: 2 },
+            { question: "What is an antonym for 'hot'?", answers: ["Warm", "Cold", "Burning", "Heated"], correct: 1 },
+
+            // TRUE OR FALSE - General Knowledge
+            { question: "TRUE or FALSE: The Great Wall of China is visible from space.", answers: ["True", "False"], correct: 1 },
+            { question: "TRUE or FALSE: Honey never expires.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: Humans use only 10% of their brain.", answers: ["True", "False"], correct: 1 },
+            { question: "TRUE or FALSE: Water can boil and freeze at the same time.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: A group of flamingos is called a 'flamboyance'.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: The Earth is the only planet not named after a god.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: Goldfish have a 3-second memory.", answers: ["True", "False"], correct: 1 },
+            { question: "TRUE or FALSE: Lightning never strikes the same place twice.", answers: ["True", "False"], correct: 1 },
+            { question: "TRUE or FALSE: Bananas are berries, but strawberries are not.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: The Eiffel Tower can grow 6 inches in summer.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: Octopuses have three hearts.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: Sound travels faster in water than in air.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: Sharks are older than trees.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: Venus is the hottest planet in our solar system.", answers: ["True", "False"], correct: 0 },
+            { question: "TRUE or FALSE: A day on Venus is longer than a year on Venus.", answers: ["True", "False"], correct: 0 },
+
+            // YOUTUBE TRIVIA
+            { question: "What year was YouTube founded?", answers: ["2003", "2005", "2007", "2010"], correct: 1 },
+            { question: "Who is the most subscribed individual YouTuber?", answers: ["PewDiePie", "MrBeast", "Markiplier", "KSI"], correct: 1 },
+            { question: "What was the first video ever uploaded to YouTube?", answers: ["Charlie Bit My Finger", "Me at the zoo", "Evolution of Dance", "Keyboard Cat"], correct: 1 },
+            { question: "Which company bought YouTube in 2006?", answers: ["Microsoft", "Apple", "Google", "Amazon"], correct: 2 },
+            { question: "What is the name of YouTube's premium subscription service?", answers: ["YouTube Red", "YouTube Plus", "YouTube Premium", "YouTube Pro"], correct: 2 },
+            { question: "What MrBeast challenge gave away $1,000,000?", answers: ["Last to Leave", "Squid Game", "Both of these", "Neither"], correct: 2 },
+            { question: "What game made PewDiePie famous?", answers: ["Minecraft", "Fortnite", "Amnesia", "Happy Wheels"], correct: 2 },
+            { question: "What is the YouTube play button for 100K subscribers?", answers: ["Gold", "Silver", "Bronze", "Diamond"], correct: 1 },
+            { question: "What is the YouTube play button for 1 million subscribers?", answers: ["Gold", "Silver", "Diamond", "Ruby"], correct: 0 },
+            { question: "What was 'Gangnam Style' famous for on YouTube?", answers: ["First 1 billion views", "Longest video", "Most disliked", "First viral dance"], correct: 0 },
+            { question: "Who created the 'Dude Perfect' YouTube channel?", answers: ["5 college friends", "A professional athlete", "A film studio", "Brothers"], correct: 0 },
+            { question: "What type of content does 'Cocomelon' create?", answers: ["Gaming", "Music", "Nursery rhymes", "Vlogs"], correct: 2 },
+            { question: "What is YouTube Shorts' maximum video length?", answers: ["15 seconds", "30 seconds", "60 seconds", "3 minutes"], correct: 2 },
+            { question: "Which song held the record for most viewed YouTube video the longest?", answers: ["Despacito", "Baby Shark", "Gangnam Style", "See You Again"], correct: 0 },
+            { question: "What feature lets viewers support creators during live streams?", answers: ["Tips", "Super Chat", "Donations", "Boost"], correct: 1 }
         ];
 
         // ==================== GAME STATE ====================
+        const TIMER_DURATION = 30; // 30 seconds to answer
+        const SPECIAL_QUESTION_INTERVAL = 30; // Special question every 30 questions
+
+        let timerInterval = null;
+        let timeRemaining = TIMER_DURATION;
+
         let gameState = {
             currentTeam: 1,
             currentPlayerIndex: 0,
-            team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}` })),
-            team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}` })),
+            team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0 })),
+            team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0 })),
             team1Finished: 0,
             team2Finished: 0,
             isRolling: false,
             currentQuestion: null,
-            pendingMove: 0
+            pendingMove: 0,
+            questionCount: 0, // Track total questions asked
+            isSpecialQuestion: false, // Track if current question is special
+            timerActive: false // Track if timer is running
         };
 
-        // ==================== HEART PATH COORDINATES ====================
+        // Game stats for leaderboard
+        let gameStats = {
+            totalCorrect: 0,
+            totalWrong: 0
+        };
+
+        // ==================== CIRCULAR PATH ====================
         function generateHeartPath() {
             const positions = [];
-            const centerX = 225;
-            const centerY = 200;
-            const scale = 8;
+            const centerX = 242;  // Center of heart container
+            const centerY = 240;  // Center of heart container
+            const radius = 140;   // Circle radius
 
-            // Generate heart shape using parametric equation
-            for (let i = 0; i <= PATH_LENGTH; i++) {
-                const t = (i / PATH_LENGTH) * 2 * Math.PI - Math.PI / 2;
-                const x = 16 * Math.pow(Math.sin(t), 3);
-                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+            // Generate circle starting from bottom
+            for (let i = 0; i < PATH_LENGTH; i++) {
+                // Start at bottom (-PI/2) and go clockwise
+                const angle = -Math.PI / 2 + (i / PATH_LENGTH) * 2 * Math.PI;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
 
-                positions.push({
-                    x: centerX + x * scale - 18,
-                    y: centerY + y * scale - 20
-                });
+                positions.push({ x: x - 18, y: y - 18 });
             }
 
             return positions;
@@ -887,6 +1957,7 @@
         // ==================== INITIALIZATION ====================
         function init() {
             createStars();
+            createShootingStars();
             renderPlayers();
             createHeartPath();
             updateUI();
@@ -903,6 +1974,45 @@
                 star.style.animationDelay = Math.random() * 2 + 's';
                 starsContainer.appendChild(star);
             }
+        }
+
+        function createShootingStars() {
+            const starsContainer = document.getElementById('stars');
+            const directions = ['dir-se', 'dir-sw', 'dir-s'];
+
+            function launchShootingStar() {
+                const star = document.createElement('div');
+                const dir = directions[Math.floor(Math.random() * directions.length)];
+                star.className = 'shooting-star ' + dir;
+
+                // Position based on direction
+                if (dir === 'dir-se') {
+                    star.style.left = Math.random() * 40 + '%';
+                    star.style.top = Math.random() * 20 + '%';
+                } else if (dir === 'dir-sw') {
+                    star.style.left = (60 + Math.random() * 40) + '%';
+                    star.style.top = Math.random() * 20 + '%';
+                } else {
+                    star.style.left = (20 + Math.random() * 60) + '%';
+                    star.style.top = Math.random() * 15 + '%';
+                }
+
+                starsContainer.appendChild(star);
+
+                setTimeout(() => {
+                    star.remove();
+                }, 1500);
+            }
+
+            // Launch shooting stars more frequently
+            setInterval(() => {
+                launchShootingStar();
+            }, 800);
+
+            // Launch several immediately
+            setTimeout(launchShootingStar, 200);
+            setTimeout(launchShootingStar, 600);
+            setTimeout(launchShootingStar, 1000);
         }
 
         function renderPlayers() {
@@ -1013,13 +2123,28 @@
             const currentPlayer = getCurrentPlayer();
             const team = gameState.currentTeam;
             const rule = team === 1 ? 'ODD (1, 3, 5)' : 'EVEN (2, 4, 6)';
+            const teamIcon = team === 1 ? '⭐' : '💫';
 
+            // Update team indicator
+            const teamIndicator = document.getElementById('teamIndicator');
+            teamIndicator.textContent = `${teamIcon} TEAM ${team}'s TURN ${teamIcon}`;
+            teamIndicator.className = `team-indicator team${team}`;
+
+            // Update player avatar
+            const avatar = document.getElementById('currentPlayerAvatar');
+            avatar.style.background = currentPlayer.color;
+            avatar.textContent = currentPlayer.name.charAt(0);
+
+            // Update player name
             document.getElementById('currentPlayerName').textContent = currentPlayer.name;
-            document.querySelector('.status-bar .current-turn').innerHTML = `
-                <span>Team ${team}</span>
-                <span class="player-dot" style="background: ${currentPlayer.color};"></span>
-                <span>- <strong>${currentPlayer.name}</strong>: Roll ${rule} to escape!</span>
-            `;
+
+            // Update roll hint
+            const hint = document.getElementById('rollHint');
+            if (currentPlayer.position < 0) {
+                hint.textContent = `Roll ${rule} to escape the start!`;
+            } else {
+                hint.textContent = `Roll the dice, then answer trivia to move forward!`;
+            }
 
             document.getElementById('team1Finished').textContent = gameState.team1Finished;
             document.getElementById('team2Finished').textContent = gameState.team2Finished;
@@ -1035,7 +2160,20 @@
         // ==================== GAME LOGIC ====================
         function setupEventListeners() {
             document.getElementById('actionButton').addEventListener('click', handleAction);
+            document.getElementById('triviaButton').addEventListener('click', handleTriviaButton);
             document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+        }
+
+        function handleTriviaButton() {
+            if (gameState.isRolling) return;
+
+            const player = getCurrentPlayer();
+            if (player.finished) return;
+
+            // Set a default move of 1 for answering trivia directly
+            gameState.pendingMove = 1;
+            gameState.isRolling = true;
+            showTrivia();
         }
 
         function handleAction() {
@@ -1067,9 +2205,10 @@
                 const escaped = (team === 1 && isOdd) || (team === 2 && !isOdd);
 
                 if (escaped) {
-                    // Player escapes to position 0
+                    // Player escapes - store the roll for movement after trivia
                     const player = getCurrentPlayer();
                     player.position = 0;
+                    gameState.pendingMove = roll; // Store roll so player moves this many spaces on correct answer
                     updatePlayerPositions();
                     showTrivia();
                 } else {
@@ -1109,6 +2248,23 @@
             const questionIndex = Math.floor(Math.random() * TRIVIA_QUESTIONS.length);
             gameState.currentQuestion = TRIVIA_QUESTIONS[questionIndex];
 
+            // Increment question counter
+            gameState.questionCount++;
+
+            // Check if this is a special question (every 30th question)
+            gameState.isSpecialQuestion = (gameState.questionCount % SPECIAL_QUESTION_INTERVAL === 0);
+
+            // Update special question badge
+            const specialBadge = document.getElementById('specialBadge');
+            if (gameState.isSpecialQuestion) {
+                specialBadge.style.display = 'inline-flex';
+            } else {
+                specialBadge.style.display = 'none';
+            }
+
+            // Update question counter display
+            document.getElementById('questionCounter').textContent = `Question ${gameState.questionCount}`;
+
             document.getElementById('triviaPlayerName').textContent =
                 `${player.name} - Answer correctly to move forward!`;
             document.getElementById('questionText').textContent =
@@ -1123,13 +2279,140 @@
                 btn.addEventListener('click', handleAnswer);
             });
 
+            // IMPORTANT: Reset timer display BEFORE showing modal
+            resetTimerDisplay();
+
             document.getElementById('triviaModal').classList.add('show');
+
+            // Start the timer AFTER modal is visible
+            startTimer();
+        }
+
+        function resetTimerDisplay() {
+            // Reset the timer text back to normal format
+            const timerText = document.getElementById('timerText');
+            timerText.innerHTML = '⏱️ <span id="timerSeconds">30</span>s';
+            timerText.classList.remove('warning', 'danger');
+
+            // Reset the timer bar
+            const timerBar = document.getElementById('timerBar');
+            timerBar.style.width = '100%';
+            timerBar.classList.remove('warning', 'danger');
+        }
+
+        function startTimer() {
+            // Stop any existing timer first
+            stopTimer();
+
+            // Reset the timer
+            timeRemaining = TIMER_DURATION;
+            updateTimerDisplay();
+
+            // Mark timer as active
+            gameState.timerActive = true;
+
+            timerInterval = setInterval(() => {
+                // Double-check timer is still active
+                if (!gameState.timerActive) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    return;
+                }
+
+                timeRemaining -= 0.1;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    // Time's up! Treat as wrong answer
+                    stopTimer();
+                    handleTimeUp();
+                }
+            }, 100);
+        }
+
+        function updateTimerDisplay() {
+            const timerBar = document.getElementById('timerBar');
+            const timerText = document.getElementById('timerText');
+            const timerSeconds = document.getElementById('timerSeconds');
+
+            if (!timerBar || !timerText || !timerSeconds) return;
+
+            const percentage = Math.max(0, (timeRemaining / TIMER_DURATION) * 100);
+            timerBar.style.width = percentage + '%';
+            timerSeconds.textContent = Math.max(0, Math.ceil(timeRemaining));
+
+            // Update colors based on time remaining
+            timerBar.classList.remove('warning', 'danger');
+            timerText.classList.remove('warning', 'danger');
+
+            if (timeRemaining <= 5) {
+                timerBar.classList.add('danger');
+                timerText.classList.add('danger');
+            } else if (timeRemaining <= 10) {
+                timerBar.classList.add('warning');
+                timerText.classList.add('warning');
+            }
+        }
+
+        function stopTimer() {
+            gameState.timerActive = false;
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function handleTimeUp() {
+            const player = getCurrentPlayer();
+
+            // Track wrong answer for stats
+            player.wrongAnswers++;
+            gameStats.totalWrong++;
+
+            // Disable all buttons and show correct answer
+            document.querySelectorAll('.answer-option').forEach(btn => {
+                btn.disabled = true;
+                if (parseInt(btn.dataset.index) === gameState.currentQuestion.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            // Show time's up message
+            const timerText = document.getElementById('timerText');
+            timerText.innerHTML = '⏱️ <span style="color: #ef4444;">TIME\'S UP!</span>';
+
+            setTimeout(() => {
+                document.getElementById('triviaModal').classList.remove('show');
+
+                // WRONG ANSWER PENALTY (same as incorrect answer)
+                if (player.position > 0) {
+                    player.position = Math.max(0, player.position - gameState.pendingMove);
+                    updatePlayerPositions();
+                }
+
+                gameState.pendingMove = 0;
+                gameState.isRolling = false;
+                nextPlayer();
+            }, 1500);
         }
 
         function handleAnswer(e) {
+            // Stop the timer immediately when answer is selected
+            stopTimer();
+
             const selectedIndex = parseInt(e.target.dataset.index);
             const correct = selectedIndex === gameState.currentQuestion.correct;
             const player = getCurrentPlayer();
+
+            // Track answer stats
+            if (correct) {
+                player.correctAnswers++;
+                player.score += gameState.isSpecialQuestion ? 20 : 10;
+                gameStats.totalCorrect++;
+            } else {
+                player.wrongAnswers++;
+                gameStats.totalWrong++;
+            }
 
             // Disable all buttons
             document.querySelectorAll('.answer-option').forEach(btn => {
@@ -1166,14 +2449,29 @@
                         updatePlayerPositions();
                         updateUI();
 
-                        // Check for winner
-                        if (gameState.team1Finished >= 4 || gameState.team2Finished >= 4) {
-                            showWinner();
-                            return;
-                        }
+                        // Show player finish celebration
+                        showPlayerFinishCelebration(player);
+
+                        // Check for winner after celebration
+                        setTimeout(() => {
+                            if (gameState.team1Finished >= 4 || gameState.team2Finished >= 4) {
+                                showWinner();
+                                return;
+                            }
+                        }, 3000);
                     }
 
                     updatePlayerPositions();
+                } else {
+                    // WRONG ANSWER PENALTY
+                    // Players can only move back if they have room (position > 0)
+                    // They can NEVER go back below 0 (into their team panel)
+                    if (player.position > 0) {
+                        // Move back by the pending move amount, but never below 0
+                        player.position = Math.max(0, player.position - gameState.pendingMove);
+                        updatePlayerPositions();
+                    }
+                    // If player is at position 0, they stay there (can't go back to panel)
                 }
 
                 gameState.pendingMove = 0;
@@ -1228,23 +2526,72 @@
             }
         }
 
+        function showPlayerFinishCelebration(player) {
+            // Show the celebration message
+            document.getElementById('finishedPlayerName').textContent = `${player.name} from Team ${gameState.currentTeam}!`;
+            const celebration = document.getElementById('finishCelebration');
+            celebration.classList.add('show');
+
+            // Create confetti
+            createConfetti();
+
+            // Hide after 2.5 seconds
+            setTimeout(() => {
+                celebration.classList.remove('show');
+            }, 2500);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ffd700'];
+            const confettiCount = 100;
+
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 20);
+            }
+        }
+
         function showWinner() {
             const winner = gameState.team1Finished >= 4 ? 'Team 1' : 'Team 2';
             document.getElementById('winnerName').textContent = `${winner} Wins! 🎊`;
             document.getElementById('winnerModal').classList.add('show');
+            createConfetti(); // Extra confetti for the winner!
         }
 
         function resetGame() {
+            // Stop any running timer
+            stopTimer();
+
             gameState = {
                 currentTeam: 1,
                 currentPlayerIndex: 0,
-                team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}` })),
-                team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}` })),
+                team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0 })),
+                team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0 })),
                 team1Finished: 0,
                 team2Finished: 0,
                 isRolling: false,
                 currentQuestion: null,
-                pendingMove: 0
+                pendingMove: 0,
+                questionCount: 0,
+                isSpecialQuestion: false,
+                timerActive: false
+            };
+
+            // Reset game stats
+            gameStats = {
+                totalCorrect: 0,
+                totalWrong: 0
             };
 
             document.getElementById('winnerModal').classList.remove('show');
@@ -1253,7 +2600,165 @@
             updateActionButton();
         }
 
+        // ==================== LEADERBOARD ====================
+        function setupLeaderboardListeners() {
+            // Open leaderboard button
+            document.getElementById('leaderboardBtn').addEventListener('click', () => {
+                updateLeaderboard();
+                document.getElementById('leaderboardModal').classList.add('show');
+            });
+
+            // Close leaderboard button
+            document.getElementById('leaderboardCloseBtn').addEventListener('click', () => {
+                document.getElementById('leaderboardModal').classList.remove('show');
+            });
+
+            // Close on overlay click
+            document.getElementById('leaderboardModal').addEventListener('click', (e) => {
+                if (e.target.id === 'leaderboardModal') {
+                    document.getElementById('leaderboardModal').classList.remove('show');
+                }
+            });
+
+            // Tab switching
+            document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active from all tabs
+                    document.querySelectorAll('.leaderboard-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.leaderboard-content').forEach(c => c.classList.remove('active'));
+
+                    // Add active to clicked tab
+                    tab.classList.add('active');
+
+                    // Show corresponding content
+                    const tabId = tab.dataset.tab;
+                    if (tabId === 'all') {
+                        document.getElementById('leaderboardAll').classList.add('active');
+                    } else if (tabId === 'team1') {
+                        document.getElementById('leaderboardTeam1').classList.add('active');
+                    } else if (tabId === 'team2') {
+                        document.getElementById('leaderboardTeam2').classList.add('active');
+                    }
+                });
+            });
+        }
+
+        function updateLeaderboard() {
+            // Update overall stats
+            const totalQuestions = gameState.questionCount;
+            const totalCorrect = gameStats.totalCorrect;
+            const totalWrong = gameStats.totalWrong;
+            const accuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('totalCorrect').textContent = totalCorrect;
+            document.getElementById('totalWrong').textContent = totalWrong;
+            document.getElementById('accuracyRate').textContent = accuracy + '%';
+
+            // Get all players with team info
+            const allPlayers = [
+                ...gameState.team1.map(p => ({ ...p, teamNum: 1, teamIcon: '⭐' })),
+                ...gameState.team2.map(p => ({ ...p, teamNum: 2, teamIcon: '💫' }))
+            ];
+
+            // Sort by score
+            const rankedPlayers = [...allPlayers].sort((a, b) => b.score - a.score);
+
+            // Update "All Players" tab
+            updateAllPlayersTab(rankedPlayers);
+
+            // Update Team 1 tab
+            updateTeamTab('team1Leaderboard', gameState.team1, 1);
+
+            // Update Team 2 tab
+            updateTeamTab('team2Leaderboard', gameState.team2, 2);
+        }
+
+        function updateAllPlayersTab(rankedPlayers) {
+            const container = document.getElementById('leaderboardAll');
+            container.innerHTML = rankedPlayers.map((player, index) => {
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : 'normal';
+                const statusText = player.finished ? 'Finished!' : `Position: ${player.position < 0 ? 'Start' : player.position}`;
+
+                return `
+                    <div class="leaderboard-player-row">
+                        <div class="leaderboard-rank ${rankClass}">${index + 1}</div>
+                        <div class="leaderboard-player-avatar" style="background: ${player.color}">
+                            ${player.name.charAt(0)}
+                        </div>
+                        <div class="leaderboard-player-info">
+                            <div class="leaderboard-player-name">${player.teamIcon} ${player.name}</div>
+                            <div class="leaderboard-player-status">${statusText}</div>
+                        </div>
+                        <div class="leaderboard-player-stats">
+                            <div class="stat-item">
+                                <div class="stat-value stat-score">${player.score}</div>
+                                <div class="stat-label">Score</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value stat-correct">${player.correctAnswers}</div>
+                                <div class="stat-label">Correct</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value stat-wrong">${player.wrongAnswers}</div>
+                                <div class="stat-label">Wrong</div>
+                            </div>
+                        </div>
+                        ${player.finished ? '<div class="leaderboard-player-finished">✓ FINISHED</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateTeamTab(containerId, teamPlayers, teamNum) {
+            const container = document.getElementById(containerId);
+            const rankedPlayers = [...teamPlayers].sort((a, b) => b.score - a.score);
+
+            container.innerHTML = rankedPlayers.map((player, index) => {
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : 'normal';
+                const statusText = player.finished ? 'Finished!' : `Position: ${player.position < 0 ? 'Start' : player.position}`;
+
+                return `
+                    <div class="leaderboard-player-row">
+                        <div class="leaderboard-rank ${rankClass}">${index + 1}</div>
+                        <div class="leaderboard-player-avatar" style="background: ${player.color}">
+                            ${player.name.charAt(0)}
+                        </div>
+                        <div class="leaderboard-player-info">
+                            <div class="leaderboard-player-name">${player.name}</div>
+                            <div class="leaderboard-player-status">${statusText}</div>
+                        </div>
+                        <div class="leaderboard-player-stats">
+                            <div class="stat-item">
+                                <div class="stat-value stat-score">${player.score}</div>
+                                <div class="stat-label">Score</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value stat-correct">${player.correctAnswers}</div>
+                                <div class="stat-label">Correct</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value stat-wrong">${player.wrongAnswers}</div>
+                                <div class="stat-label">Wrong</div>
+                            </div>
+                        </div>
+                        ${player.finished ? '<div class="leaderboard-player-finished">✓ FINISHED</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
         // Initialize the game
+        function init() {
+            createStars();
+            createHeartPath();
+            renderPlayers();
+            updateUI();
+            updateActionButton();
+            setupEventListeners();
+            setupLeaderboardListeners();
+        }
+
         init();
     </script>
 </body>

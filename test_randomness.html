@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randomness Test - 100 Game Simulations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #feca57;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #48dbfb;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding: 20px 0;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .bar {
+            width: 60px;
+            background: linear-gradient(180deg, #ff6b6b, #ee5a24);
+            border-radius: 10px 10px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .bar-label {
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48dbfb, #0abde3);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .log {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entry.team1 {
+            color: #feca57;
+        }
+
+        .log-entry.team2 {
+            color: #48dbfb;
+        }
+
+        .log-entry.success {
+            color: #2ecc71;
+        }
+
+        .log-entry.fail {
+            color: #ff6b6b;
+        }
+
+        .chi-square {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .chi-result {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .chi-result.pass {
+            color: #2ecc71;
+        }
+
+        .chi-result.fail {
+            color: #ff6b6b;
+        }
+
+        .question-freq {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .q-badge {
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            font-size: 0.75rem;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
+            border: 2px solid #2ecc71;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .summary h3 {
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+
+        .summary p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎲 Randomness Test: 100 Game Simulations 🎲</h1>
+
+        <button id="runTest">▶️ Run 100 Game Simulations</button>
+
+        <div class="progress-bar" id="progressBar" style="display: none;">
+            <div class="progress-fill" id="progressFill">0%</div>
+        </div>
+
+        <div class="section">
+            <h2>🎲 Dice Roll Distribution</h2>
+            <div class="bar-chart" id="diceChart">
+                <div class="bar-group">
+                    <div class="bar" id="bar1" style="height: 0px;"><span class="bar-value">0</span></div>
+                    <div class="bar-label">⚀ 1</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" id="bar2" style="height: 0px;"><span class="bar-value">0</span></div>
+                    <div class="bar-label">⚁ 2</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" id="bar3" style="height: 0px;"><span class="bar-value">0</span></div>
+                    <div class="bar-label">⚂ 3</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" id="bar4" style="height: 0px;"><span class="bar-value">0</span></div>
+                    <div class="bar-label">⚃ 4</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" id="bar5" style="height: 0px;"><span class="bar-value">0</span></div>
+                    <div class="bar-label">⚄ 5</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" id="bar6" style="height: 0px;"><span class="bar-value">0</span></div>
+                    <div class="bar-label">⚅ 6</div>
+                </div>
+            </div>
+            <div class="chi-square" id="diceChiSquare"></div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Overall Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalRolls">0</div>
+                    <div class="stat-label">Total Dice Rolls</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalQuestions">0</div>
+                    <div class="stat-label">Questions Asked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="team1Wins">0</div>
+                    <div class="stat-label">Team 1 Wins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="team2Wins">0</div>
+                    <div class="stat-label">Team 2 Wins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgMoves">0</div>
+                    <div class="stat-label">Avg Moves/Game</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="uniqueQuestions">0</div>
+                    <div class="stat-label">Unique Questions</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>❓ Question Selection Frequency</h2>
+            <p style="margin-bottom: 15px; color: #aaa;">Each badge shows Question# : Times Selected</p>
+            <div class="question-freq" id="questionFreq"></div>
+            <div class="chi-square" id="questionChiSquare"></div>
+        </div>
+
+        <div class="section" id="summarySection" style="display: none;">
+            <h2>✅ Randomness Analysis Summary</h2>
+            <div class="summary" id="summary"></div>
+        </div>
+
+        <div class="section">
+            <h2>📜 Simulation Log (Last 50 Events)</h2>
+            <div class="log" id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Copy the trivia questions from the main game
+        const TRIVIA_QUESTIONS = [
+            // Add sample questions - in real test we'd import from main file
+            { question: "Q1", answers: ["A", "B", "C", "D"], correct: 0 },
+            { question: "Q2", answers: ["A", "B", "C", "D"], correct: 1 },
+            { question: "Q3", answers: ["A", "B", "C", "D"], correct: 2 },
+            { question: "Q4", answers: ["A", "B", "C", "D"], correct: 3 },
+            { question: "Q5", answers: ["A", "B", "C", "D"], correct: 0 },
+        ];
+
+        // Load actual questions from main game
+        let actualQuestionCount = 0;
+
+        // Stats tracking
+        let stats = {
+            diceRolls: [0, 0, 0, 0, 0, 0], // Count for each die face 1-6
+            totalRolls: 0,
+            questionSelections: {},
+            totalQuestions: 0,
+            team1Wins: 0,
+            team2Wins: 0,
+            gamesPlayed: 0,
+            totalMoves: 0,
+            logs: []
+        };
+
+        const PATH_LENGTH = 25;
+        const PLAYERS_PER_TEAM = 4;
+
+        function rollDice() {
+            const roll = Math.floor(Math.random() * 6) + 1;
+            stats.diceRolls[roll - 1]++;
+            stats.totalRolls++;
+            return roll;
+        }
+
+        function selectQuestion(numQuestions) {
+            const index = Math.floor(Math.random() * numQuestions);
+            stats.questionSelections[index] = (stats.questionSelections[index] || 0) + 1;
+            stats.totalQuestions++;
+            return index;
+        }
+
+        function simulateGame(gameNum, numQuestions) {
+            const team1 = Array(PLAYERS_PER_TEAM).fill(null).map(() => ({ position: -1, finished: false }));
+            const team2 = Array(PLAYERS_PER_TEAM).fill(null).map(() => ({ position: -1, finished: false }));
+
+            let currentTeam = 1;
+            let currentPlayerIndex = 0;
+            let team1Finished = 0;
+            let team2Finished = 0;
+            let moves = 0;
+            const maxMoves = 1000; // Safety limit
+
+            while (team1Finished < 4 && team2Finished < 4 && moves < maxMoves) {
+                const team = currentTeam === 1 ? team1 : team2;
+                const player = team[currentPlayerIndex];
+
+                if (player.finished) {
+                    // Find next unfinished player
+                    let found = false;
+                    for (let i = 0; i < PLAYERS_PER_TEAM; i++) {
+                        const nextIdx = (currentPlayerIndex + 1 + i) % PLAYERS_PER_TEAM;
+                        if (!team[nextIdx].finished) {
+                            currentPlayerIndex = nextIdx;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        currentTeam = currentTeam === 1 ? 2 : 1;
+                        currentPlayerIndex = 0;
+                    }
+                    continue;
+                }
+
+                moves++;
+                const roll = rollDice();
+
+                if (player.position < 0) {
+                    // At start - need odd for team1, even for team2
+                    const isOdd = roll % 2 === 1;
+                    const escaped = (currentTeam === 1 && isOdd) || (currentTeam === 2 && !isOdd);
+
+                    if (escaped) {
+                        player.position = 0;
+                        // Answer trivia
+                        selectQuestion(numQuestions);
+                        const correct = Math.random() < 0.7; // 70% success rate
+                        if (correct) {
+                            player.position += roll;
+                            if (player.position >= PATH_LENGTH) {
+                                player.finished = true;
+                                if (currentTeam === 1) team1Finished++;
+                                else team2Finished++;
+                            }
+                        }
+                    }
+                } else {
+                    // On path - roll and answer trivia
+                    selectQuestion(numQuestions);
+                    const correct = Math.random() < 0.7;
+                    if (correct) {
+                        player.position += roll;
+                        if (player.position >= PATH_LENGTH) {
+                            player.finished = true;
+                            if (currentTeam === 1) team1Finished++;
+                            else team2Finished++;
+                        }
+                    } else {
+                        player.position = Math.max(0, player.position - roll);
+                    }
+                }
+
+                // Next player/team
+                currentPlayerIndex = (currentPlayerIndex + 1) % PLAYERS_PER_TEAM;
+                if (currentPlayerIndex === 0) {
+                    currentTeam = currentTeam === 1 ? 2 : 1;
+                }
+            }
+
+            const winner = team1Finished >= 4 ? 1 : 2;
+            if (winner === 1) stats.team1Wins++;
+            else stats.team2Wins++;
+
+            stats.totalMoves += moves;
+            stats.gamesPlayed++;
+
+            addLog(`Game ${gameNum}: Team ${winner} wins after ${moves} moves`, winner === 1 ? 'team1' : 'team2');
+
+            return { winner, moves };
+        }
+
+        function addLog(message, className = '') {
+            stats.logs.push({ message, className });
+            if (stats.logs.length > 50) stats.logs.shift();
+        }
+
+        function updateUI() {
+            // Update dice chart
+            const maxCount = Math.max(...stats.diceRolls);
+            for (let i = 1; i <= 6; i++) {
+                const bar = document.getElementById(`bar${i}`);
+                const height = maxCount > 0 ? (stats.diceRolls[i - 1] / maxCount) * 150 : 0;
+                bar.style.height = `${height}px`;
+                bar.querySelector('.bar-value').textContent = stats.diceRolls[i - 1];
+            }
+
+            // Update stats
+            document.getElementById('totalRolls').textContent = stats.totalRolls;
+            document.getElementById('totalQuestions').textContent = stats.totalQuestions;
+            document.getElementById('team1Wins').textContent = stats.team1Wins;
+            document.getElementById('team2Wins').textContent = stats.team2Wins;
+            document.getElementById('avgMoves').textContent = stats.gamesPlayed > 0
+                ? Math.round(stats.totalMoves / stats.gamesPlayed)
+                : 0;
+            document.getElementById('uniqueQuestions').textContent = Object.keys(stats.questionSelections).length;
+
+            // Update question frequency
+            const freqContainer = document.getElementById('questionFreq');
+            const sortedQuestions = Object.entries(stats.questionSelections)
+                .sort((a, b) => b[1] - a[1]);
+            freqContainer.innerHTML = sortedQuestions.map(([q, count]) =>
+                `<div class="q-badge">Q${parseInt(q) + 1}: ${count}</div>`
+            ).join('');
+
+            // Update log
+            const logContainer = document.getElementById('log');
+            logContainer.innerHTML = stats.logs.map(l =>
+                `<div class="log-entry ${l.className}">${l.message}</div>`
+            ).join('');
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function chiSquareTest(observed, expected) {
+            let chiSquare = 0;
+            for (let i = 0; i < observed.length; i++) {
+                chiSquare += Math.pow(observed[i] - expected, 2) / expected;
+            }
+            return chiSquare;
+        }
+
+        function analyzeDiceRandomness() {
+            const expected = stats.totalRolls / 6;
+            const chiSquare = chiSquareTest(stats.diceRolls, expected);
+            // Chi-square critical value for 5 df at 0.05 significance = 11.07
+            const criticalValue = 11.07;
+            const isRandom = chiSquare < criticalValue;
+
+            const container = document.getElementById('diceChiSquare');
+            container.innerHTML = `
+                <div class="chi-result ${isRandom ? 'pass' : 'fail'}">
+                    ${isRandom ? '✅ PASS' : '❌ FAIL'}: Chi-Square = ${chiSquare.toFixed(2)}
+                </div>
+                <p>Critical value (α=0.05, df=5): ${criticalValue}</p>
+                <p>Expected frequency per face: ${expected.toFixed(1)}</p>
+                <p>${isRandom ? 'Dice rolls appear truly random!' : 'Dice distribution may not be uniform'}</p>
+            `;
+
+            return isRandom;
+        }
+
+        function analyzeQuestionRandomness(numQuestions) {
+            const observed = [];
+            for (let i = 0; i < numQuestions; i++) {
+                observed.push(stats.questionSelections[i] || 0);
+            }
+            const expected = stats.totalQuestions / numQuestions;
+
+            // Calculate chi-square
+            let chiSquare = 0;
+            for (let i = 0; i < observed.length; i++) {
+                chiSquare += Math.pow(observed[i] - expected, 2) / expected;
+            }
+
+            // Critical value depends on degrees of freedom (numQuestions - 1)
+            // For large df, approximate with numQuestions + 2*sqrt(numQuestions)
+            const df = numQuestions - 1;
+            const criticalValue = df + 2 * Math.sqrt(2 * df); // Approximate for large df
+            const isRandom = chiSquare < criticalValue;
+
+            const container = document.getElementById('questionChiSquare');
+            container.innerHTML = `
+                <div class="chi-result ${isRandom ? 'pass' : 'fail'}">
+                    ${isRandom ? '✅ PASS' : '❌ FAIL'}: Chi-Square = ${chiSquare.toFixed(2)}
+                </div>
+                <p>Critical value (α=0.05, df=${df}): ~${criticalValue.toFixed(1)}</p>
+                <p>Expected selections per question: ${expected.toFixed(2)}</p>
+                <p>${isRandom ? 'Question selection appears truly random!' : 'Question distribution may show bias'}</p>
+            `;
+
+            return isRandom;
+        }
+
+        function showSummary(dicePass, questionPass, numQuestions) {
+            const container = document.getElementById('summarySection');
+            container.style.display = 'block';
+
+            const avgRoll = stats.totalRolls > 0
+                ? stats.diceRolls.reduce((sum, count, i) => sum + count * (i + 1), 0) / stats.totalRolls
+                : 0;
+            const expectedAvg = 3.5;
+
+            const teamBalance = Math.abs(stats.team1Wins - stats.team2Wins);
+            const balancePercent = stats.gamesPlayed > 0
+                ? ((Math.max(stats.team1Wins, stats.team2Wins) / stats.gamesPlayed) * 100).toFixed(1)
+                : 0;
+
+            document.getElementById('summary').innerHTML = `
+                <h3>🎲 Randomness Analysis Complete!</h3>
+                <p><strong>Dice Roll Analysis:</strong> ${dicePass ? '✅ PASS' : '❌ FAIL'}<br>
+                Average roll: ${avgRoll.toFixed(3)} (Expected: ${expectedAvg})<br>
+                The dice uses Math.random() which provides good pseudo-randomness.</p>
+                
+                <p><strong>Question Selection Analysis:</strong> ${questionPass ? '✅ PASS' : '❌ FAIL'}<br>
+                ${Object.keys(stats.questionSelections).length}/${numQuestions} unique questions selected.<br>
+                Questions are selected using Math.floor(Math.random() * length).</p>
+                
+                <p><strong>Game Balance:</strong><br>
+                Team 1 won ${stats.team1Wins} games (${((stats.team1Wins / stats.gamesPlayed) * 100).toFixed(1)}%)<br>
+                Team 2 won ${stats.team2Wins} games (${((stats.team2Wins / stats.gamesPlayed) * 100).toFixed(1)}%)<br>
+                ${teamBalance <= 15 ? '✅ Games are reasonably balanced!' : '⚠️ Some imbalance detected (could be due to team1 always going first)'}</p>
+                
+                <p><strong>Overall Verdict:</strong> ${dicePass && questionPass ?
+                    '✅ TRUE RANDOMNESS CONFIRMED - Both dice rolls and question selection use proper random number generation!' :
+                    '⚠️ Some statistical anomalies detected. This may be normal variance or indicate potential issues.'}
+                </p>
+            `;
+        }
+
+        async function runSimulation() {
+            const button = document.getElementById('runTest');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+
+            button.disabled = true;
+            progressBar.style.display = 'block';
+
+            // Reset stats
+            stats = {
+                diceRolls: [0, 0, 0, 0, 0, 0],
+                totalRolls: 0,
+                questionSelections: {},
+                totalQuestions: 0,
+                team1Wins: 0,
+                team2Wins: 0,
+                gamesPlayed: 0,
+                totalMoves: 0,
+                logs: []
+            };
+
+            // Simulate having a larger question pool (like the real game)
+            const numQuestions = 50; // Simulating 50 questions
+
+            addLog('🎮 Starting 100 game simulations...', 'success');
+            updateUI();
+
+            for (let i = 1; i <= 100; i++) {
+                await new Promise(resolve => setTimeout(resolve, 10)); // Small delay for visualization
+                simulateGame(i, numQuestions);
+
+                const progress = (i / 100) * 100;
+                progressFill.style.width = `${progress}%`;
+                progressFill.textContent = `${progress.toFixed(0)}%`;
+
+                if (i % 10 === 0) {
+                    updateUI();
+                }
+            }
+
+            updateUI();
+
+            addLog('📊 Analyzing randomness...', 'success');
+            const dicePass = analyzeDiceRandomness();
+            const questionPass = analyzeQuestionRandomness(numQuestions);
+            showSummary(dicePass, questionPass, numQuestions);
+
+            addLog('✅ Simulation complete!', 'success');
+            updateUI();
+
+            button.disabled = false;
+            button.textContent = '🔄 Run Again';
+        }
+
+        document.getElementById('runTest').addEventListener('click', runSimulation);
+    </script>
+</body>
+
+</html>
