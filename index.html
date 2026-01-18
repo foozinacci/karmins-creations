@@ -1658,10 +1658,310 @@
             font-size: 0.8rem;
             font-style: italic;
         }
+
+        /* Age Selection Modal */
+        .age-modal {
+            background: linear-gradient(135deg, rgba(30, 20, 60, 0.98), rgba(50, 30, 80, 0.98));
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .age-modal h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .age-modal p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+        }
+
+        .age-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .age-btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .age-btn.kids {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+        }
+
+        .age-btn.teens {
+            background: linear-gradient(135deg, #fbbf24, #f97316);
+            color: white;
+        }
+
+        .age-btn.adults {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .age-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Team Escape Overlay */
+        .escape-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(30, 20, 60, 0.95));
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            flex-direction: column;
+        }
+
+        .escape-overlay.show {
+            display: flex;
+            animation: fadeInOverlay 0.5s ease;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .escape-message {
+            font-size: 4rem;
+            font-weight: 800;
+            text-align: center;
+            animation: pulseEscape 2s infinite;
+            text-shadow: 0 0 30px currentColor;
+        }
+
+        .escape-message.team1 {
+            background: linear-gradient(135deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .escape-message.team2 {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes pulseEscape {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .escape-player {
+            font-size: 2rem;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .escape-countdown {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Difficulty Badge */
+        .difficulty-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+
+        .difficulty-badge.easy {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+        }
+
+        .difficulty-badge.medium {
+            background: linear-gradient(135deg, #fbbf24, #f97316);
+            color: white;
+        }
+
+        .difficulty-badge.hard {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        /* Category Badge */
+        .category-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Win Streak */
+        .win-streak {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #fbbf24;
+            margin-top: 5px;
+        }
+
+        .win-streak.hot {
+            animation: fireGlow 0.5s infinite alternate;
+        }
+
+        @keyframes fireGlow {
+            from {
+                text-shadow: 0 0 5px #ff6b6b;
+            }
+
+            to {
+                text-shadow: 0 0 15px #ff6b6b, 0 0 25px #fbbf24;
+            }
+        }
+
+        /* Voice Bubble */
+        .voice-bubble {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            color: white;
+            z-index: 9999;
+            animation: bubbleIn 0.3s ease, bubbleOut 0.3s ease 2.7s forwards;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes bubbleIn {
+            from {
+                transform: translateX(-50%) translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bubbleOut {
+            to {
+                transform: translateX(-50%) translateY(-20px);
+                opacity: 0;
+            }
+        }
+
+        /* Feedback Button */
+        .feedback-btn {
+            width: 100%;
+            padding: 12px 25px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            background: transparent;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            margin-top: 10px;
+        }
+
+        .feedback-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Help Button */
+        .help-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
     </style>
 </head>
 
 <body>
+    <!-- Age Selection Modal -->
+    <div class="modal-overlay show" id="ageModal">
+        <div class="age-modal">
+            <h2>🎮 Welcome to Ring of Facts!</h2>
+            <p>Select your age group for appropriate question difficulty:</p>
+            <div class="age-buttons">
+                <button class="age-btn kids" data-age="kids">👶 Kids (8-10 years) - Easy Mode</button>
+                <button class="age-btn teens" data-age="teens">🧒 Tweens (11-13 years) - Medium Mode</button>
+                <button class="age-btn adults" data-age="adults">👨 Teens+ (14+ years) - Hard Mode</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Escape Overlay -->
+    <div class="escape-overlay" id="escapeOverlay">
+        <div class="escape-message" id="escapeMessage">TEAM 1 HAS ESCAPED THE RING!</div>
+        <div class="escape-player" id="escapePlayer">🎉 Player Name 🎉</div>
+        <div class="escape-countdown" id="escapeCountdown">Continuing in 30s...</div>
+    </div>
+
     <!-- Animated Stars Background -->
     <div class="stars" id="stars"></div>
 
@@ -1812,6 +2112,46 @@
             <h2>🎉 Congratulations! 🎉</h2>
             <div class="winner-name" id="winnerName">Team 1 Wins!</div>
             <button class="play-again-btn" id="playAgainBtn">🔄 Play Again</button>
+            <button class="feedback-btn" id="feedbackBtn" onclick="showFeedback()">📝 Send Feedback</button>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="age-modal">
+            <h2>📝 Send Feedback</h2>
+            <p>Tell us what you think about Ring of Facts!</p>
+            <textarea id="feedbackText" placeholder="Write your feedback here..."
+                style="width: 100%; height: 120px; border-radius: 10px; padding: 10px; font-family: 'Outfit', sans-serif; margin-bottom: 15px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; resize: none;"></textarea>
+            <div class="age-buttons">
+                <button class="age-btn teens" onclick="submitFeedback()">📨 Submit Feedback</button>
+                <button class="age-btn kids" onclick="closeFeedback()">❌ Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Modal -->
+    <div class="modal-overlay" id="tutorialModal">
+        <div class="age-modal" style="max-width: 550px;">
+            <h2>📖 How to Play</h2>
+            <div style="text-align: left; margin: 20px 0; line-height: 1.8;">
+                <p><strong>🎯 Goal:</strong> Be the first team to get 4 players to the FINISH!</p>
+                <p><strong>🎲 Rolling:</strong></p>
+                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                    <li>Team 1 rolls ODD (1,3,5) to escape start</li>
+                    <li>Team 2 rolls EVEN (2,4,6) to escape start</li>
+                    <li>Higher rolls = harder questions but more spaces!</li>
+                </ul>
+                <p><strong>🧠 Questions:</strong></p>
+                <ul style="margin-left: 20px; margin-bottom: 10px;">
+                    <li>Roll 1-2 = 🟢 Easy question</li>
+                    <li>Roll 3-4 = 🟡 Medium question</li>
+                    <li>Roll 5-6 = 🔴 Hard question</li>
+                </ul>
+                <p><strong>🔥 Win Streaks:</strong> Get 3+ correct in a row for bonus points!</p>
+                <p><strong>🎤 Voice:</strong> Click the mic to speak your answer!</p>
+            </div>
+            <button class="age-btn teens" onclick="closeTutorial()">Got it! Let's Play! 🎮</button>
         </div>
     </div>
 
@@ -1819,6 +2159,9 @@
     <button class="leaderboard-btn" id="leaderboardBtn">
         🏆 Leaderboard
     </button>
+
+    <!-- Help Button -->
+    <button class="help-btn" id="helpBtn" onclick="showTutorial()">❓</button>
 
     <!-- Leaderboard Modal -->
     <div class="modal-overlay" id="leaderboardModal">
@@ -1901,114 +2244,211 @@
             { name: 'Red Storm', color: '#ef4444', emoji: '🔴' }
         ];
 
-        const TRIVIA_QUESTIONS = [
-            // Math - 5th/6th Grade Level
-            { question: "What is 3/4 + 1/4?", answers: ["1/2", "2/4", "1", "3/4"], correct: 2 },
-            { question: "What is 15% of 200?", answers: ["15", "20", "30", "35"], correct: 2 },
-            { question: "What is 7 × 8?", answers: ["54", "56", "58", "64"], correct: 1 },
-            { question: "What is the square root of 64?", answers: ["6", "7", "8", "9"], correct: 2 },
-            { question: "What is 3² + 4²?", answers: ["7", "12", "25", "49"], correct: 2 },
-            { question: "What is 0.5 × 0.5?", answers: ["0.1", "0.25", "0.5", "1"], correct: 1 },
-            { question: "What is 144 ÷ 12?", answers: ["10", "11", "12", "13"], correct: 2 },
-            { question: "What is 2/3 of 18?", answers: ["6", "9", "12", "15"], correct: 2 },
-            { question: "What is -5 + 12?", answers: ["7", "-7", "17", "-17"], correct: 0 },
-            { question: "What is 1000 in Roman numerals?", answers: ["C", "D", "M", "L"], correct: 2 },
+        // ==================== SOUND EFFECTS ====================
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
 
-            // Science - 5th/6th Grade Level
-            { question: "Which planet is known as the Red Planet?", answers: ["Venus", "Mars", "Jupiter", "Saturn"], correct: 1 },
-            { question: "What gas do plants absorb from the air?", answers: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], correct: 2 },
-            { question: "What is the smallest unit of life?", answers: ["Atom", "Cell", "Molecule", "Organ"], correct: 1 },
-            { question: "What force keeps us on the ground?", answers: ["Magnetism", "Friction", "Gravity", "Inertia"], correct: 2 },
-            { question: "How many bones are in the adult human body?", answers: ["106", "156", "206", "256"], correct: 2 },
-            { question: "What is H₂O?", answers: ["Hydrogen", "Helium", "Water", "Oxygen"], correct: 2 },
-            { question: "Which organ pumps blood through your body?", answers: ["Brain", "Lungs", "Heart", "Liver"], correct: 2 },
-            { question: "What layer of Earth do we live on?", answers: ["Core", "Mantle", "Crust", "Magma"], correct: 2 },
-            { question: "What is the closest star to Earth?", answers: ["Proxima Centauri", "Sirius", "The Sun", "Polaris"], correct: 2 },
-            { question: "What type of rock forms from cooled lava?", answers: ["Sedimentary", "Metamorphic", "Igneous", "Limestone"], correct: 2 },
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
 
-            // Geography - 5th/6th Grade Level
-            { question: "What is the largest ocean on Earth?", answers: ["Atlantic", "Indian", "Pacific", "Arctic"], correct: 2 },
-            { question: "What is the capital of the United States?", answers: ["New York", "Los Angeles", "Washington D.C.", "Chicago"], correct: 2 },
-            { question: "Which continent is the Sahara Desert on?", answers: ["Asia", "Africa", "Australia", "South America"], correct: 1 },
-            { question: "What is the longest river in the world?", answers: ["Amazon", "Nile", "Mississippi", "Yangtze"], correct: 1 },
-            { question: "How many continents are there?", answers: ["5", "6", "7", "8"], correct: 2 },
-            { question: "What country has the largest population?", answers: ["USA", "India", "China", "Russia"], correct: 2 },
-            { question: "What mountain is the tallest in the world?", answers: ["K2", "Kilimanjaro", "Mount Everest", "Denali"], correct: 2 },
-            { question: "What ocean is between the USA and Europe?", answers: ["Pacific", "Indian", "Atlantic", "Arctic"], correct: 2 },
+        function playDiceRollSound() {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
 
-            // History & Social Studies - 5th/6th Grade Level
-            { question: "Who was the first President of the United States?", answers: ["Abraham Lincoln", "George Washington", "Thomas Jefferson", "John Adams"], correct: 1 },
-            { question: "In what year did the Titanic sink?", answers: ["1905", "1912", "1920", "1935"], correct: 1 },
-            { question: "What document starts with 'We the People'?", answers: ["Declaration of Independence", "Bill of Rights", "Constitution", "Magna Carta"], correct: 2 },
-            { question: "Who invented the light bulb?", answers: ["Benjamin Franklin", "Nikola Tesla", "Thomas Edison", "Alexander Bell"], correct: 2 },
-            { question: "What ancient civilization built pyramids?", answers: ["Romans", "Greeks", "Egyptians", "Mayans"], correct: 2 },
-            { question: "How many stripes are on the American flag?", answers: ["11", "12", "13", "15"], correct: 2 },
-            { question: "What year did World War II end?", answers: ["1943", "1944", "1945", "1946"], correct: 2 },
-            { question: "Who wrote the Declaration of Independence?", answers: ["George Washington", "Benjamin Franklin", "Thomas Jefferson", "John Adams"], correct: 2 },
+            oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.2);
+            oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.3);
 
-            // Language Arts - 5th/6th Grade Level
-            { question: "What is a noun?", answers: ["Action word", "Describing word", "Person, place, or thing", "Joining word"], correct: 2 },
-            { question: "What is the plural of 'child'?", answers: ["Childs", "Children", "Childen", "Childes"], correct: 1 },
-            { question: "What is a synonym for 'happy'?", answers: ["Sad", "Angry", "Joyful", "Tired"], correct: 2 },
-            { question: "What punctuation ends a question?", answers: ["Period", "Exclamation mark", "Question mark", "Comma"], correct: 2 },
-            { question: "What is the past tense of 'run'?", answers: ["Runned", "Running", "Ran", "Runs"], correct: 2 },
-            { question: "What is an antonym for 'hot'?", answers: ["Warm", "Cold", "Burning", "Heated"], correct: 1 },
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
 
-            // TRUE OR FALSE - General Knowledge
-            { question: "TRUE or FALSE: The Great Wall of China is visible from space.", answers: ["True", "False"], correct: 1 },
-            { question: "TRUE or FALSE: Honey never expires.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: Humans use only 10% of their brain.", answers: ["True", "False"], correct: 1 },
-            { question: "TRUE or FALSE: Water can boil and freeze at the same time.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: A group of flamingos is called a 'flamboyance'.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: The Earth is the only planet not named after a god.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: Goldfish have a 3-second memory.", answers: ["True", "False"], correct: 1 },
-            { question: "TRUE or FALSE: Lightning never strikes the same place twice.", answers: ["True", "False"], correct: 1 },
-            { question: "TRUE or FALSE: Bananas are berries, but strawberries are not.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: The Eiffel Tower can grow 6 inches in summer.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: Octopuses have three hearts.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: Sound travels faster in water than in air.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: Sharks are older than trees.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: Venus is the hottest planet in our solar system.", answers: ["True", "False"], correct: 0 },
-            { question: "TRUE or FALSE: A day on Venus is longer than a year on Venus.", answers: ["True", "False"], correct: 0 },
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.4);
+        }
 
-            // YOUTUBE TRIVIA
-            { question: "What year was YouTube founded?", answers: ["2003", "2005", "2007", "2010"], correct: 1 },
-            { question: "Who is the most subscribed individual YouTuber?", answers: ["PewDiePie", "MrBeast", "Markiplier", "KSI"], correct: 1 },
-            { question: "What was the first video ever uploaded to YouTube?", answers: ["Charlie Bit My Finger", "Me at the zoo", "Evolution of Dance", "Keyboard Cat"], correct: 1 },
-            { question: "Which company bought YouTube in 2006?", answers: ["Microsoft", "Apple", "Google", "Amazon"], correct: 2 },
-            { question: "What is the name of YouTube's premium subscription service?", answers: ["YouTube Red", "YouTube Plus", "YouTube Premium", "YouTube Pro"], correct: 2 },
-            { question: "What MrBeast challenge gave away $1,000,000?", answers: ["Last to Leave", "Squid Game", "Both of these", "Neither"], correct: 2 },
-            { question: "What game made PewDiePie famous?", answers: ["Minecraft", "Fortnite", "Amnesia", "Happy Wheels"], correct: 2 },
-            { question: "What is the YouTube play button for 100K subscribers?", answers: ["Gold", "Silver", "Bronze", "Diamond"], correct: 1 },
-            { question: "What is the YouTube play button for 1 million subscribers?", answers: ["Gold", "Silver", "Diamond", "Ruby"], correct: 0 },
-            { question: "What was 'Gangnam Style' famous for on YouTube?", answers: ["First 1 billion views", "Longest video", "Most disliked", "First viral dance"], correct: 0 },
-            { question: "Who created the 'Dude Perfect' YouTube channel?", answers: ["5 college friends", "A professional athlete", "A film studio", "Brothers"], correct: 0 },
-            { question: "What type of content does 'Cocomelon' create?", answers: ["Gaming", "Music", "Nursery rhymes", "Vlogs"], correct: 2 },
-            { question: "What is YouTube Shorts' maximum video length?", answers: ["15 seconds", "30 seconds", "60 seconds", "3 minutes"], correct: 2 },
-            { question: "Which song held the record for most viewed YouTube video the longest?", answers: ["Despacito", "Baby Shark", "Gangnam Style", "See You Again"], correct: 0 },
-            { question: "What feature lets viewers support creators during live streams?", answers: ["Tips", "Super Chat", "Donations", "Boost"], correct: 1 }
-        ];
+        function playWrongSound() {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.4);
+        }
+
+        function playCorrectSound() {
+            initAudio();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523, audioCtx.currentTime);
+            oscillator.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.4);
+        }
+
+        // ==================== CATEGORIZED TRIVIA QUESTIONS ====================
+        // Categories: space, youtube, school
+        // Difficulty: easy (roll 1-2), medium (roll 3-4), hard (roll 5-6)
+
+        const TRIVIA_QUESTIONS = {
+            space: {
+                easy: [
+                    { question: "What planet is known as the Red Planet?", answers: ["Venus", "Mars", "Jupiter", "Saturn"], correct: 1 },
+                    { question: "What is the closest star to Earth?", answers: ["Sirius", "Alpha Centauri", "The Sun", "Polaris"], correct: 2 },
+                    { question: "How many planets are in our solar system?", answers: ["7", "8", "9", "10"], correct: 1 },
+                    { question: "What is the largest planet in our solar system?", answers: ["Saturn", "Neptune", "Jupiter", "Uranus"], correct: 2 },
+                    { question: "What do astronauts wear in space?", answers: ["Swimsuit", "Spacesuit", "Raincoat", "Pajamas"], correct: 1 },
+                    { question: "The Moon orbits around what?", answers: ["The Sun", "Mars", "Earth", "Jupiter"], correct: 2 },
+                ],
+                medium: [
+                    { question: "Which planet has the most moons?", answers: ["Jupiter", "Saturn", "Uranus", "Neptune"], correct: 1 },
+                    { question: "What is the hottest planet in our solar system?", answers: ["Mercury", "Venus", "Mars", "Jupiter"], correct: 1 },
+                    { question: "What galaxy do we live in?", answers: ["Andromeda", "Milky Way", "Triangulum", "Sombrero"], correct: 1 },
+                    { question: "How long does it take Earth to orbit the Sun?", answers: ["1 day", "1 month", "1 year", "1 decade"], correct: 2 },
+                    { question: "What is the smallest planet?", answers: ["Mars", "Mercury", "Venus", "Pluto"], correct: 1 },
+                    { question: "Which planet is known for its rings?", answers: ["Jupiter", "Saturn", "Uranus", "Neptune"], correct: 1 },
+                ],
+                hard: [
+                    { question: "What is a light-year?", answers: ["Time unit", "Distance unit", "Speed unit", "Mass unit"], correct: 1 },
+                    { question: "What causes a solar eclipse?", answers: ["Earth blocks Sun", "Moon blocks Sun", "Sun explodes", "Stars align"], correct: 1 },
+                    { question: "What is the Great Red Spot on Jupiter?", answers: ["A volcano", "A storm", "A crater", "An ocean"], correct: 1 },
+                    { question: "How old is our Sun approximately?", answers: ["1 billion years", "4.6 billion years", "10 billion years", "100 million years"], correct: 1 },
+                    { question: "What is a black hole?", answers: ["Empty space", "Region of extreme gravity", "Dark planet", "Dead star only"], correct: 1 },
+                    { question: "Which spacecraft first landed humans on the Moon?", answers: ["Apollo 11", "Apollo 13", "Voyager 1", "Challenger"], correct: 0 },
+                ]
+            },
+            youtube: {
+                easy: [
+                    { question: "What color is the YouTube play button logo?", answers: ["Blue", "Green", "Red", "Yellow"], correct: 2 },
+                    { question: "Who is the most subscribed individual YouTuber?", answers: ["PewDiePie", "MrBeast", "Markiplier", "KSI"], correct: 1 },
+                    { question: "What is YouTube's slogan?", answers: ["Watch More", "Broadcast Yourself", "Share Videos", "Click Play"], correct: 1 },
+                    { question: "Which company owns YouTube?", answers: ["Microsoft", "Apple", "Google", "Amazon"], correct: 2 },
+                    { question: "What does 'subscribe' do on YouTube?", answers: ["Delete videos", "Follow a channel", "Block users", "Make videos"], correct: 1 },
+                    { question: "What is a 'like' on YouTube?", answers: ["Thumbs up", "Thumbs down", "Heart", "Star"], correct: 0 },
+                ],
+                medium: [
+                    { question: "What year was YouTube founded?", answers: ["2003", "2005", "2007", "2010"], correct: 1 },
+                    { question: "What is the YouTube play button for 100K subscribers?", answers: ["Gold", "Silver", "Bronze", "Diamond"], correct: 1 },
+                    { question: "What is the YouTube play button for 1 million subscribers?", answers: ["Gold", "Silver", "Diamond", "Ruby"], correct: 0 },
+                    { question: "What was the first video ever uploaded to YouTube?", answers: ["Charlie Bit My Finger", "Me at the zoo", "Evolution of Dance", "Keyboard Cat"], correct: 1 },
+                    { question: "What is YouTube Shorts' maximum video length?", answers: ["15 seconds", "30 seconds", "60 seconds", "3 minutes"], correct: 2 },
+                    { question: "What type of content does 'Cocomelon' create?", answers: ["Gaming", "Music", "Nursery rhymes", "Vlogs"], correct: 2 },
+                ],
+                hard: [
+                    { question: "What was 'Gangnam Style' famous for on YouTube?", answers: ["First 1 billion views", "Longest video", "Most disliked", "First 4K video"], correct: 0 },
+                    { question: "What feature lets viewers support creators during live streams?", answers: ["Tips", "Super Chat", "Donations", "Boost"], correct: 1 },
+                    { question: "What game made PewDiePie famous?", answers: ["Minecraft", "Fortnite", "Amnesia", "Happy Wheels"], correct: 2 },
+                    { question: "Who created the 'Dude Perfect' YouTube channel?", answers: ["5 college friends", "A professional athlete", "A film studio", "Twin brothers"], correct: 0 },
+                    { question: "When did Google buy YouTube?", answers: ["2005", "2006", "2008", "2010"], correct: 1 },
+                    { question: "What is 'YouTube Premium' called in some countries?", answers: ["YouTube Pro", "YouTube Red", "YouTube Plus", "YouTube Gold"], correct: 1 },
+                ]
+            },
+            school: {
+                easy: [
+                    { question: "What is 5 + 7?", answers: ["10", "11", "12", "13"], correct: 2 },
+                    { question: "What is 7 × 8?", answers: ["54", "56", "58", "64"], correct: 1 },
+                    { question: "How many continents are there?", answers: ["5", "6", "7", "8"], correct: 2 },
+                    { question: "What is the capital of the United States?", answers: ["New York", "Los Angeles", "Washington D.C.", "Chicago"], correct: 2 },
+                    { question: "What is H₂O?", answers: ["Hydrogen", "Helium", "Water", "Oxygen"], correct: 2 },
+                    { question: "Which organ pumps blood through your body?", answers: ["Brain", "Lungs", "Heart", "Liver"], correct: 2 },
+                    { question: "What is the plural of 'child'?", answers: ["Childs", "Children", "Childen", "Childes"], correct: 1 },
+                    { question: "What punctuation ends a question?", answers: ["Period", "Exclamation mark", "Question mark", "Comma"], correct: 2 },
+                ],
+                medium: [
+                    { question: "What is 3/4 + 1/4?", answers: ["1/2", "2/4", "1", "3/4"], correct: 2 },
+                    { question: "What is 15% of 200?", answers: ["15", "20", "30", "35"], correct: 2 },
+                    { question: "What is the largest ocean on Earth?", answers: ["Atlantic", "Indian", "Pacific", "Arctic"], correct: 2 },
+                    { question: "Who was the first President of the United States?", answers: ["Abraham Lincoln", "George Washington", "Thomas Jefferson", "John Adams"], correct: 1 },
+                    { question: "What gas do plants absorb from the air?", answers: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], correct: 2 },
+                    { question: "What force keeps us on the ground?", answers: ["Magnetism", "Friction", "Gravity", "Inertia"], correct: 2 },
+                    { question: "What is the longest river in the world?", answers: ["Amazon", "Nile", "Mississippi", "Yangtze"], correct: 1 },
+                    { question: "How many bones are in the adult human body?", answers: ["106", "156", "206", "256"], correct: 2 },
+                ],
+                hard: [
+                    { question: "What is the square root of 144?", answers: ["10", "11", "12", "14"], correct: 2 },
+                    { question: "What is 3² + 4²?", answers: ["7", "12", "25", "49"], correct: 2 },
+                    { question: "What document starts with 'We the People'?", answers: ["Declaration of Independence", "Bill of Rights", "Constitution", "Magna Carta"], correct: 2 },
+                    { question: "What year did World War II end?", answers: ["1943", "1944", "1945", "1946"], correct: 2 },
+                    { question: "What is the smallest unit of life?", answers: ["Atom", "Cell", "Molecule", "Organ"], correct: 1 },
+                    { question: "What type of rock forms from cooled lava?", answers: ["Sedimentary", "Metamorphic", "Igneous", "Limestone"], correct: 2 },
+                    { question: "What is 1000 in Roman numerals?", answers: ["C", "D", "M", "L"], correct: 2 },
+                    { question: "Who invented the light bulb?", answers: ["Benjamin Franklin", "Nikola Tesla", "Thomas Edison", "Alexander Bell"], correct: 2 },
+                ]
+            },
+            trueFalse: {
+                easy: [
+                    { question: "TRUE or FALSE: The Sun is a star.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: Fish can breathe underwater.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: Spiders have 6 legs.", answers: ["True", "False"], correct: 1 },
+                    { question: "TRUE or FALSE: The Earth is round.", answers: ["True", "False"], correct: 0 },
+                ],
+                medium: [
+                    { question: "TRUE or FALSE: Honey never expires.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: Octopuses have three hearts.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: Sound travels faster in water than in air.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: The Great Wall of China is visible from space.", answers: ["True", "False"], correct: 1 },
+                ],
+                hard: [
+                    { question: "TRUE or FALSE: Venus is hotter than Mercury.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: A day on Venus is longer than a year on Venus.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: Sharks are older than trees.", answers: ["True", "False"], correct: 0 },
+                    { question: "TRUE or FALSE: Bananas are berries, but strawberries are not.", answers: ["True", "False"], correct: 0 },
+                ]
+            }
+        };
+
+        // ==================== GAME CONFIGURATION ====================
+        const TIMER_DURATION = 30;
+        const SPECIAL_QUESTION_INTERVAL = 30;
+        const ESCAPE_OVERLAY_DURATION = 30; // 30 seconds
+
+        // Age mode affects base difficulty
+        let ageMode = 'teens'; // kids, teens, adults
+        let gameStarted = false;
 
         // ==================== GAME STATE ====================
-        const TIMER_DURATION = 30; // 30 seconds to answer
-        const SPECIAL_QUESTION_INTERVAL = 30; // Special question every 30 questions
-
         let timerInterval = null;
         let timeRemaining = TIMER_DURATION;
 
         let gameState = {
             currentTeam: 1,
             currentPlayerIndex: 0,
-            team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0 })),
-            team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0 })),
+            team1: TEAM1_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t1p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0, winStreak: 0 })),
+            team2: TEAM2_PLAYERS.map((p, i) => ({ ...p, position: -1, finished: false, id: `t2p${i}`, correctAnswers: 0, wrongAnswers: 0, score: 0, winStreak: 0 })),
             team1Finished: 0,
             team2Finished: 0,
             isRolling: false,
             currentQuestion: null,
+            currentDifficulty: 'medium',
+            currentCategory: 'school',
             pendingMove: 0,
-            questionCount: 0, // Track total questions asked
-            isSpecialQuestion: false, // Track if current question is special
-            timerActive: false // Track if timer is running
+            questionCount: 0,
+            isSpecialQuestion: false,
+            timerActive: false
         };
 
         // Game stats for leaderboard
@@ -2326,12 +2766,47 @@
             diceDisplay.classList.remove('show');
             void diceDisplay.offsetWidth; // Trigger reflow
             diceDisplay.classList.add('show');
+
+            // Play dice roll sound
+            playDiceRollSound();
+        }
+
+        // Get difficulty based on roll number
+        function getDifficultyFromRoll(roll) {
+            if (roll <= 2) return 'easy';
+            if (roll <= 4) return 'medium';
+            return 'hard';
+        }
+
+        // Get a random question from the categorized structure
+        function getRandomQuestion(difficulty) {
+            const categories = ['space', 'youtube', 'school', 'trueFalse'];
+            const category = categories[Math.floor(Math.random() * categories.length)];
+
+            // Adjust difficulty based on age mode
+            let finalDifficulty = difficulty;
+            if (ageMode === 'kids' && difficulty === 'hard') {
+                finalDifficulty = 'medium';
+            } else if (ageMode === 'adults' && difficulty === 'easy') {
+                finalDifficulty = 'medium';
+            }
+
+            const questions = TRIVIA_QUESTIONS[category][finalDifficulty];
+            const question = questions[Math.floor(Math.random() * questions.length)];
+
+            // Store category and difficulty for display
+            gameState.currentCategory = category;
+            gameState.currentDifficulty = finalDifficulty;
+
+            return question;
         }
 
         function showTrivia() {
             const player = getCurrentPlayer();
-            const questionIndex = Math.floor(Math.random() * TRIVIA_QUESTIONS.length);
-            gameState.currentQuestion = TRIVIA_QUESTIONS[questionIndex];
+
+            // Get difficulty based on the dice roll
+            const difficulty = getDifficultyFromRoll(gameState.pendingMove);
+            gameState.currentQuestion = getRandomQuestion(difficulty);
 
             // Increment question counter
             gameState.questionCount++;
@@ -2347,11 +2822,16 @@
                 specialBadge.style.display = 'none';
             }
 
-            // Update question counter display
-            document.getElementById('questionCounter').textContent = `Question ${gameState.questionCount}`;
+            // Update question counter display with difficulty badge
+            const difficultyEmoji = gameState.currentDifficulty === 'easy' ? '🟢' :
+                gameState.currentDifficulty === 'medium' ? '🟡' : '🔴';
+            const categoryNames = { space: '🚀 Space', youtube: '📺 YouTube', school: '📚 School', trueFalse: '✓/✗ True/False' };
+            document.getElementById('questionCounter').innerHTML = `Question ${gameState.questionCount} <span class="difficulty-badge ${gameState.currentDifficulty}">${difficultyEmoji} ${gameState.currentDifficulty.toUpperCase()}</span>`;
 
+            // Show win streak if player has one
+            const streakText = player.winStreak >= 2 ? ` 🔥 ${player.winStreak} streak!` : '';
             document.getElementById('triviaPlayerName').textContent =
-                `${player.name} - Answer correctly to move forward!`;
+                `${player.name}${streakText} - Answer correctly to move forward!`;
             document.getElementById('questionText').textContent =
                 gameState.currentQuestion.question;
 
@@ -2452,7 +2932,11 @@
 
             // Track wrong answer for stats
             player.wrongAnswers++;
+            player.winStreak = 0; // Reset win streak
             gameStats.totalWrong++;
+
+            // Play wrong sound
+            playWrongSound();
 
             // Disable all buttons and show correct answer
             document.querySelectorAll('.answer-option').forEach(btn => {
@@ -2489,14 +2973,22 @@
             const correct = selectedIndex === gameState.currentQuestion.correct;
             const player = getCurrentPlayer();
 
-            // Track answer stats
+            // Track answer stats and play sounds
             if (correct) {
                 player.correctAnswers++;
+                player.winStreak++; // Increment win streak
                 player.score += gameState.isSpecialQuestion ? 20 : 10;
+                // Bonus points for win streaks
+                if (player.winStreak >= 3) {
+                    player.score += player.winStreak * 2;
+                }
                 gameStats.totalCorrect++;
+                playCorrectSound();
             } else {
                 player.wrongAnswers++;
+                player.winStreak = 0; // Reset win streak
                 gameStats.totalWrong++;
+                playWrongSound();
             }
 
             // Disable all buttons
@@ -2612,18 +3104,32 @@
         }
 
         function showPlayerFinishCelebration(player) {
-            // Show the celebration message
-            document.getElementById('finishedPlayerName').textContent = `${player.name} from Team ${gameState.currentTeam}!`;
-            const celebration = document.getElementById('finishCelebration');
-            celebration.classList.add('show');
+            // Show the escape overlay for 30 seconds
+            const overlay = document.getElementById('escapeOverlay');
+            const message = document.getElementById('escapeMessage');
+            const playerName = document.getElementById('escapePlayer');
+            const countdown = document.getElementById('escapeCountdown');
 
-            // Create confetti
+            message.textContent = `TEAM ${gameState.currentTeam} HAS ESCAPED THE RING!`;
+            message.className = `escape-message team${gameState.currentTeam}`;
+            playerName.textContent = `🎉 ${player.name} 🎉`;
+
+            overlay.classList.add('show');
             createConfetti();
 
-            // Hide after 2.5 seconds
-            setTimeout(() => {
-                celebration.classList.remove('show');
-            }, 2500);
+            // Start 30-second countdown
+            let timeLeft = ESCAPE_OVERLAY_DURATION;
+            countdown.textContent = `Continuing in ${timeLeft}s...`;
+
+            const countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdown.textContent = `Continuing in ${timeLeft}s...`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    overlay.classList.remove('show');
+                }
+            }, 1000);
         }
 
         function createConfetti() {
@@ -3012,6 +3518,77 @@
             }
         }
 
+        // ==================== AGE MODAL & TUTORIAL ====================
+        function setupAgeModal() {
+            const ageButtons = document.querySelectorAll('.age-btn[data-age]');
+            ageButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    ageMode = btn.dataset.age;
+                    document.getElementById('ageModal').classList.remove('show');
+
+                    // Show tutorial after age selection
+                    setTimeout(() => {
+                        showTutorial();
+                    }, 300);
+                });
+            });
+        }
+
+        function showTutorial() {
+            document.getElementById('tutorialModal').classList.add('show');
+        }
+
+        function closeTutorial() {
+            document.getElementById('tutorialModal').classList.remove('show');
+            gameStarted = true;
+        }
+
+        // ==================== FEEDBACK ====================
+        function showFeedback() {
+            document.getElementById('feedbackModal').classList.add('show');
+        }
+
+        function closeFeedback() {
+            document.getElementById('feedbackModal').classList.remove('show');
+        }
+
+        function submitFeedback() {
+            const feedback = document.getElementById('feedbackText').value.trim();
+            if (feedback) {
+                // Create a voice bubble to show feedback was submitted
+                showVoiceBubble('✅ Thank you for your feedback!');
+
+                // Log feedback to console (in a real app, send to server)
+                console.log('User Feedback:', feedback);
+                console.log('Age Mode:', ageMode);
+                console.log('Game Stats:', gameStats);
+
+                closeFeedback();
+                document.getElementById('feedbackText').value = '';
+            } else {
+                showVoiceBubble('Please write some feedback first!');
+            }
+        }
+
+        // ==================== VOICE BUBBLES ====================
+        function showVoiceBubble(message) {
+            // Remove any existing bubble
+            const existingBubble = document.querySelector('.voice-bubble');
+            if (existingBubble) {
+                existingBubble.remove();
+            }
+
+            const bubble = document.createElement('div');
+            bubble.className = 'voice-bubble';
+            bubble.textContent = message;
+            document.body.appendChild(bubble);
+
+            // Remove after animation
+            setTimeout(() => {
+                bubble.remove();
+            }, 3000);
+        }
+
         // Initialize the game
         function init() {
             createStars();
@@ -3022,6 +3599,7 @@
             setupEventListeners();
             setupLeaderboardListeners();
             initVoiceRecognition();
+            setupAgeModal();
         }
 
         init();
