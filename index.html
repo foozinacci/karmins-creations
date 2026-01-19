@@ -3426,25 +3426,33 @@
                 const escaped = (team === 1 && isOdd) || (team === 2 && !isOdd);
 
                 if (escaped) {
-                    // Player escapes - goes to position 0 (starting line)
+                    // Player escapes - goes to position 0 and gets trivia
                     const player = getCurrentPlayer();
                     player.position = 0;  // Start at position 0
-                    gameState.pendingMove = 0; // No movement on escape - they just land on the ring
+                    gameState.pendingMove = roll; // Move by roll amount if trivia correct
                     updatePlayerPositions();
 
-                    // Show escape success message and move to next player
-                    showVoiceBubble(`🎉 ${player.name} escaped! Now on the ring!`);
-                    gameState.isRolling = false;
+                    showVoiceBubble(`🎉 ${player.name} escaped! Answer to move ${roll} spaces!`);
 
-                    // Sync state
+                    // Show trivia - if correct, player moves by roll amount
+                    showTrivia();
+
+                    // Sync trivia to other player
                     if (isMultiplayer && conn) {
+                        conn.send({
+                            type: 'showTrivia',
+                            data: {
+                                question: gameState.currentQuestion,
+                                questionCount: gameState.questionCount,
+                                pendingMove: gameState.pendingMove
+                            }
+                        });
                         sendGameState();
                     }
-
-                    nextPlayer();
                 } else {
                     // Failed to escape, next player
                     gameState.isRolling = false;
+                    showVoiceBubble(`❌ Needed ${team === 1 ? 'ODD' : 'EVEN'}! Try again next turn.`);
                     nextPlayer();
 
                     // Sync state after failed escape
