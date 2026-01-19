@@ -2497,6 +2497,10 @@
     <!-- Music Button -->
     <button class="music-btn muted" id="musicBtn" onclick="toggleMusic()">🔇</button>
 
+    <!-- Chat Button (always visible) -->
+    <button class="music-btn" id="chatBtn" onclick="toggleChat()"
+        style="left: 80px; background: linear-gradient(135deg, #3b82f6, #2563eb);">💬</button>
+
     <!-- Age Selection Modal -->
     <div class="modal-overlay show" id="ageModal">
         <div class="age-modal">
@@ -2607,7 +2611,7 @@
 
     <!-- Header -->
     <header class="header">
-        <h1><span class="bulb">💡</span> Ring of Facts <span class="bulb">💡</span></h1>
+        <h1>🚀 Ring of Facts 🌟</h1>
         <p>Answer trivia questions to reach the glowing lightbulb!</p>
     </header>
 
@@ -2675,7 +2679,6 @@
             <!-- Action Buttons -->
             <div class="button-container">
                 <button class="action-button" id="actionButton">🎲 Roll to Escape</button>
-                <button class="trivia-button" id="triviaButton">🧠 Trivia Question</button>
             </div>
         </div>
 
@@ -5501,13 +5504,24 @@
                 const token = new THREE.Mesh(tokenGeometry, tokenMaterial);
                 token.rotation.x = Math.PI; // Point up
 
-                // Initial position (off board)
+                // Get position for player on team base (2x2 grid)
+                const baseX = player.team === 1 ? -200 : 200;
+                const gridPos = [
+                    { x: -15, z: -15 },
+                    { x: 15, z: -15 },
+                    { x: -15, z: 15 },
+                    { x: 15, z: 15 }
+                ];
+
+                // Initial position
                 if (player.position < 0) {
-                    // Starting area
-                    token.position.set(player.team === 1 ? -200 : 200, 30, (idx % 2) * 30 - 15);
+                    // On team base platform (2x2 arrangement)
+                    const pos = gridPos[player.index] || { x: 0, z: 0 };
+                    token.position.set(baseX + pos.x, 15, pos.z);
                 } else if (player.finished) {
                     // Finish platform
-                    token.position.set(player.team === 1 ? -200 : 200, 20, (player.index * 20) - 20);
+                    const pos = gridPos[player.index] || { x: 0, z: 0 };
+                    token.position.set(baseX + pos.x, 15, pos.z);
                 } else {
                     // On the path
                     const angle = (player.position / PATH_LENGTH) * Math.PI * 2 - Math.PI / 2;
@@ -5536,22 +5550,24 @@
                 const player = allPlayers[idx];
                 if (!player) return;
 
+                // Grid positions for team base (2x2 arrangement)
+                const gridPos = [
+                    { x: -15, z: -15 },
+                    { x: 15, z: -15 },
+                    { x: -15, z: 15 },
+                    { x: 15, z: 15 }
+                ];
+                const baseX = player.team === 1 ? -200 : 200;
+                const pos = gridPos[player.index] || { x: 0, z: 0 };
+
                 let targetPos;
 
                 if (player.finished) {
-                    // Move to finish platform
-                    targetPos = new THREE.Vector3(
-                        player.team === 1 ? -200 : 200,
-                        20,
-                        (player.index * 25) - 25
-                    );
+                    // On finish platform (same position arrangement)
+                    targetPos = new THREE.Vector3(baseX + pos.x, 15, pos.z);
                 } else if (player.position < 0) {
-                    // Starting area
-                    targetPos = new THREE.Vector3(
-                        player.team === 1 ? -200 : 200,
-                        30,
-                        (idx % 2) * 30 - 15
-                    );
+                    // On team base platform
+                    targetPos = new THREE.Vector3(baseX + pos.x, 15, pos.z);
                 } else {
                     // On the ring path
                     const angle = (player.position / PATH_LENGTH) * Math.PI * 2 - Math.PI / 2;
