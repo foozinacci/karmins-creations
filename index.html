@@ -3776,6 +3776,16 @@
                                 return;
                             }
                         }, 3000);
+                    } else {
+                        // Check for collision with opponent (trivia-off!)
+                        const opponent = checkForCollision(player);
+                        if (opponent) {
+                            updatePlayerPositions();
+                            setTimeout(() => {
+                                showTriviaOff(player, opponent);
+                            }, 500);
+                            return; // Don't proceed to next player yet
+                        }
                     }
 
                     updatePlayerPositions();
@@ -3791,6 +3801,97 @@
                     // If player is at position 0, they stay there (can't go back to panel)
                 }
 
+                gameState.pendingMove = 0;
+                gameState.isRolling = false;
+                nextPlayer();
+            }, 1500);
+        }
+
+        // Check if a player collided with an opponent on the same space
+        function checkForCollision(movingPlayer) {
+            const movingTeam = gameState.currentTeam;
+            const opponents = movingTeam === 1 ? gameState.team2 : gameState.team1;
+
+            // Find any opponent on the same position
+            for (const opponent of opponents) {
+                if (!opponent.finished && opponent.position >= 0 && opponent.position === movingPlayer.position) {
+                    return opponent;
+                }
+            }
+            return null;
+        }
+
+        // Trivia-off showdown when two players land on the same space!
+        function showTriviaOff(player1, player2) {
+            gameState.triviaOff = {
+                player1: player1,
+                player2: player2,
+                active: true
+            };
+
+            // Get a question for the showdown
+            const question = getRandomQuestion('medium');
+            gameState.currentQuestion = question;
+
+            showVoiceBubble(`⚔️ TRIVIA-OFF! ${player1.name} vs ${player2.name}!`);
+
+            // Show trivia modal with showdown indicator
+            setTimeout(() => {
+                document.getElementById('triviaPlayerName').innerHTML =
+                    `⚔️ <span style="color: ${player1.color}">${player1.name}</span> vs <span style="color: ${player2.color}">${player2.name}</span> - First to answer wins!`;
+                document.getElementById('questionText').textContent = question.question;
+
+                const optionsContainer = document.getElementById('answerOptions');
+                optionsContainer.innerHTML = question.answers.map((answer, i) => `
+                    <button class="answer-option trivia-off-btn" data-index="${i}">${answer}</button>
+                `).join('');
+
+                optionsContainer.querySelectorAll('.answer-option').forEach(btn => {
+                    btn.addEventListener('click', handleTriviaOffAnswer);
+                });
+
+                document.getElementById('triviaModal').classList.add('show');
+                startTimer();
+            }, 1000);
+        }
+
+        function handleTriviaOffAnswer(e) {
+            if (!gameState.triviaOff?.active) return;
+
+            stopTimer();
+            const clickedIndex = parseInt(e.target.dataset.index);
+            const correct = clickedIndex === gameState.currentQuestion.correct;
+
+            const winner = getCurrentPlayer(); // Current player wins if correct
+            const loser = gameState.triviaOff.player1 === winner ? gameState.triviaOff.player2 : gameState.triviaOff.player1;
+
+            // Disable all buttons
+            document.querySelectorAll('.answer-option').forEach(btn => {
+                btn.disabled = true;
+                if (parseInt(btn.dataset.index) === gameState.currentQuestion.correct) {
+                    btn.classList.add('correct');
+                } else if (btn === e.target && !correct) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            setTimeout(() => {
+                document.getElementById('triviaModal').classList.remove('show');
+
+                if (correct) {
+                    // Winner stays, loser moves back 2 spaces
+                    loser.position = Math.max(0, loser.position - 2);
+                    showVoiceBubble(`🏆 ${winner.name} wins! ${loser.name} moves back!`);
+                    playCorrectSound();
+                } else {
+                    // Attacker loses - move back to previous position
+                    winner.position = Math.max(0, winner.position - gameState.pendingMove);
+                    showVoiceBubble(`❌ ${winner.name} missed! Stays back.`);
+                    playWrongSound();
+                }
+
+                gameState.triviaOff = null;
+                updatePlayerPositions();
                 gameState.pendingMove = 0;
                 gameState.isRolling = false;
                 nextPlayer();
