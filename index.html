@@ -4224,7 +4224,7 @@
         }
 
         function showPlayerFinishCelebration(player) {
-            // Show the escape overlay for 30 seconds
+            // Show the escape overlay with continue button
             const overlay = document.getElementById('escapeOverlay');
             const message = document.getElementById('escapeMessage');
             const playerName = document.getElementById('escapePlayer');
@@ -4234,22 +4234,49 @@
             message.className = `escape-message team${gameState.currentTeam}`;
             playerName.textContent = `🎉 ${player.name} 🎉`;
 
+            // Replace countdown with Continue button
+            countdown.innerHTML = `
+                <button id="continueBtn" style="
+                    background: linear-gradient(135deg, #22c55e, #16a34a);
+                    border: none;
+                    padding: 15px 40px;
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: white;
+                    border-radius: 50px;
+                    cursor: pointer;
+                    margin-top: 20px;
+                    box-shadow: 0 5px 20px rgba(34, 197, 94, 0.5);
+                    transition: transform 0.2s, box-shadow 0.2s;
+                ">
+                    ▶️ Continue
+                </button>
+            `;
+
             overlay.classList.add('show');
             createConfetti();
 
-            // Start 30-second countdown
-            let timeLeft = ESCAPE_OVERLAY_DURATION;
-            countdown.textContent = `Continuing in ${timeLeft}s...`;
-
-            const countdownInterval = setInterval(() => {
-                timeLeft--;
-                countdown.textContent = `Continuing in ${timeLeft}s...`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(countdownInterval);
-                    overlay.classList.remove('show');
+            // Add event listener to continue button
+            document.getElementById('continueBtn').addEventListener('click', () => {
+                overlay.classList.remove('show');
+                // Check for winner
+                if (gameState.team1Finished >= 4 || gameState.team2Finished >= 4) {
+                    showWinner();
+                } else {
+                    nextPlayer();
                 }
-            }, 1000);
+            });
+
+            // Add hover effect
+            const btn = document.getElementById('continueBtn');
+            btn.onmouseover = () => {
+                btn.style.transform = 'scale(1.05)';
+                btn.style.boxShadow = '0 8px 30px rgba(34, 197, 94, 0.7)';
+            };
+            btn.onmouseout = () => {
+                btn.style.transform = 'scale(1)';
+                btn.style.boxShadow = '0 5px 20px rgba(34, 197, 94, 0.5)';
+            };
         }
 
         function createConfetti() {
