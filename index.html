@@ -2932,17 +2932,17 @@
         const PATH_LENGTH = 14; // Reduced to prevent overlap
 
         const TEAM1_PLAYERS = [
-            { name: 'Blue Runner', color: '#3b82f6', emoji: '🔵' },
-            { name: 'Yellow Star', color: '#eab308', emoji: '⭐' },
-            { name: 'Green Hero', color: '#22c55e', emoji: '🟢' },
-            { name: 'Purple Legend', color: '#a855f7', emoji: '🟣' }
+            { name: 'Bluey', color: '#3b82f6', emoji: '🐕' },
+            { name: 'Bingo', color: '#f97316', emoji: '🐶' },
+            { name: 'Flashy', color: '#eab308', emoji: '⚡' },
+            { name: 'Bubbles', color: '#06b6d4', emoji: '🫧' }
         ];
 
         const TEAM2_PLAYERS = [
-            { name: 'Pink Flash', color: '#ec4899', emoji: '💗' },
-            { name: 'Orange Blaze', color: '#f97316', emoji: '🟠' },
-            { name: 'Cyan Wave', color: '#06b6d4', emoji: '🔵' },
-            { name: 'Red Storm', color: '#ef4444', emoji: '🔴' }
+            { name: 'Lightnin', color: '#fbbf24', emoji: '⚡' },
+            { name: 'Saturn', color: '#a855f7', emoji: '🪐' },
+            { name: 'Mercury', color: '#94a3b8', emoji: '☿️' },
+            { name: 'Mars', color: '#ef4444', emoji: '🔴' }
         ];
 
         // ==================== SOUND EFFECTS ====================
@@ -3070,14 +3070,14 @@
             },
             school: {
                 easy: [
-                    { question: "What is 5 + 7?", answers: ["10", "11", "12", "13"], correct: 2 },
-                    { question: "What is 7 × 8?", answers: ["54", "56", "58", "64"], correct: 1 },
-                    { question: "How many continents are there?", answers: ["5", "6", "7", "8"], correct: 2 },
-                    { question: "What is the capital of the United States?", answers: ["New York", "Los Angeles", "Washington D.C.", "Chicago"], correct: 2 },
-                    { question: "What is H₂O?", answers: ["Hydrogen", "Helium", "Water", "Oxygen"], correct: 2 },
-                    { question: "Which organ pumps blood through your body?", answers: ["Brain", "Lungs", "Heart", "Liver"], correct: 2 },
-                    { question: "What is the plural of 'child'?", answers: ["Childs", "Children", "Childen", "Childes"], correct: 1 },
-                    { question: "What punctuation ends a question?", answers: ["Period", "Exclamation mark", "Question mark", "Comma"], correct: 2 },
+                    { question: "What is 12 × 7?", answers: ["74", "84", "94", "104"], correct: 1 },
+                    { question: "What is 156 + 89?", answers: ["235", "245", "255", "265"], correct: 1 },
+                    { question: "How many sides does a hexagon have?", answers: ["5", "6", "7", "8"], correct: 1 },
+                    { question: "What is the capital of Australia?", answers: ["Sydney", "Melbourne", "Canberra", "Perth"], correct: 2 },
+                    { question: "What gas do plants absorb from the air?", answers: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Helium"], correct: 2 },
+                    { question: "What is the largest mammal on Earth?", answers: ["Elephant", "Blue Whale", "Giraffe", "Polar Bear"], correct: 1 },
+                    { question: "What is the chemical symbol for gold?", answers: ["Go", "Gd", "Au", "Ag"], correct: 2 },
+                    { question: "Which planet has the most moons?", answers: ["Jupiter", "Saturn", "Uranus", "Neptune"], correct: 1 },
                 ],
                 medium: [
                     { question: "What is 3/4 + 1/4?", answers: ["1/2", "2/4", "1", "3/4"], correct: 2 },
@@ -3854,38 +3854,220 @@
             document.getElementById('questionText').textContent = question.question;
 
             const optionsContainer = document.getElementById('answerOptions');
-            optionsContainer.innerHTML = question.answers.map((answer, i) => `
-                <button class="answer-option mini-game-btn" data-index="${i}">${answer}</button>
-            `).join('');
 
-            optionsContainer.querySelectorAll('.answer-option').forEach(btn => {
-                btn.addEventListener('click', handleMiniGameAnswer);
-            });
+            // Create speed click mini-game
+            const miniGames = ['speed-click', 'reaction', 'memory'];
+            const game = miniGames[Math.floor(Math.random() * miniGames.length)];
 
-            document.getElementById('triviaModal').classList.add('show');
-            startTimer();
+            if (game === 'speed-click') {
+                // Speed Click Game - click 10 targets as fast as possible
+                optionsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="font-size: 1.5rem; margin-bottom: 20px;">🎯 Click all the targets!</p>
+                        <div id="miniGameArea" style="position: relative; width: 100%; height: 200px; background: rgba(0,0,0,0.3); border-radius: 15px; overflow: hidden;">
+                            <!-- Targets will spawn here -->
+                        </div>
+                        <p id="miniGameScore" style="margin-top: 15px; font-size: 1.2rem;">Targets: <span id="targetsLeft">10</span></p>
+                    </div>
+                `;
+                document.getElementById('triviaModal').classList.add('show');
+                startSpeedClickGame();
+            } else if (game === 'reaction') {
+                // Reaction Game - wait and click when screen turns green
+                optionsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="font-size: 1.5rem; margin-bottom: 20px;">⚡ Wait for GREEN, then click!</p>
+                        <div id="reactionBox" style="width: 100%; height: 150px; background: #ef4444; border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 2rem; transition: background 0.2s;">
+                            WAIT...
+                        </div>
+                        <p id="reactionResult" style="margin-top: 15px; font-size: 1.2rem;"></p>
+                    </div>
+                `;
+                document.getElementById('triviaModal').classList.add('show');
+                startReactionGame();
+            } else {
+                // Memory Game - repeat the sequence
+                optionsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="font-size: 1.5rem; margin-bottom: 20px;">🧠 Remember the sequence!</p>
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+                            <div class="memory-btn" data-color="red" style="width: 60px; height: 60px; background: #ef4444; border-radius: 10px; cursor: pointer; opacity: 0.5;"></div>
+                            <div class="memory-btn" data-color="blue" style="width: 60px; height: 60px; background: #3b82f6; border-radius: 10px; cursor: pointer; opacity: 0.5;"></div>
+                            <div class="memory-btn" data-color="green" style="width: 60px; height: 60px; background: #22c55e; border-radius: 10px; cursor: pointer; opacity: 0.5;"></div>
+                            <div class="memory-btn" data-color="yellow" style="width: 60px; height: 60px; background: #eab308; border-radius: 10px; cursor: pointer; opacity: 0.5;"></div>
+                        </div>
+                        <p id="memoryStatus" style="font-size: 1.2rem;">Watch the pattern...</p>
+                    </div>
+                `;
+                document.getElementById('triviaModal').classList.add('show');
+                startMemoryGame();
+            }
         }
 
-        function handleMiniGameAnswer(e) {
-            if (!gameState.miniGameActive) return;
+        // Speed Click Mini-Game
+        function startSpeedClickGame() {
+            let targetsLeft = 10;
+            const area = document.getElementById('miniGameArea');
 
-            stopTimer();
-            const clickedIndex = parseInt(e.target.dataset.index);
-            const correct = clickedIndex === gameState.currentQuestion.correct;
+            function spawnTarget() {
+                if (targetsLeft <= 0) return;
 
-            document.querySelectorAll('.answer-option').forEach(btn => {
-                btn.disabled = true;
-                if (parseInt(btn.dataset.index) === gameState.currentQuestion.correct) {
-                    btn.classList.add('correct');
-                } else if (btn === e.target && !correct) {
-                    btn.classList.add('incorrect');
+                const target = document.createElement('div');
+                target.style.cssText = `
+                    position: absolute;
+                    width: 40px; height: 40px;
+                    background: linear-gradient(135deg, #fbbf24, #f97316);
+                    border-radius: 50%;
+                    cursor: pointer;
+                    left: ${Math.random() * 260}px;
+                    top: ${Math.random() * 160}px;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 1.2rem;
+                    animation: pulse 0.5s ease-in-out infinite alternate;
+                `;
+                target.textContent = '🎯';
+                target.onclick = () => {
+                    target.remove();
+                    targetsLeft--;
+                    document.getElementById('targetsLeft').textContent = targetsLeft;
+                    playCorrectSound();
+                    if (targetsLeft <= 0) {
+                        endMiniGame(true);
+                    }
+                };
+                area.appendChild(target);
+
+                // Remove target after 2 seconds if not clicked
+                setTimeout(() => {
+                    if (target.parentNode) {
+                        target.remove();
+                        if (targetsLeft > 0) spawnTarget();
+                    }
+                }, 2000);
+            }
+
+            // Spawn targets every 500ms
+            let spawnInterval = setInterval(() => {
+                if (targetsLeft <= 0) {
+                    clearInterval(spawnInterval);
+                    return;
                 }
-            });
+                spawnTarget();
+            }, 500);
+
+            // 15 second time limit
+            setTimeout(() => {
+                clearInterval(spawnInterval);
+                if (targetsLeft > 0) {
+                    endMiniGame(false);
+                }
+            }, 15000);
+
+            spawnTarget();
+        }
+
+        // Reaction Mini-Game
+        function startReactionGame() {
+            const box = document.getElementById('reactionBox');
+            let canClick = false;
+            let startTime = 0;
+
+            box.onclick = () => {
+                if (!canClick) {
+                    document.getElementById('reactionResult').textContent = '❌ Too early! Wait for GREEN!';
+                    endMiniGame(false);
+                } else {
+                    const reactionTime = Date.now() - startTime;
+                    if (reactionTime < 500) {
+                        document.getElementById('reactionResult').textContent = `⚡ ${reactionTime}ms - Lightning fast!`;
+                        endMiniGame(true);
+                    } else if (reactionTime < 1000) {
+                        document.getElementById('reactionResult').textContent = `✅ ${reactionTime}ms - Good reaction!`;
+                        endMiniGame(true);
+                    } else {
+                        document.getElementById('reactionResult').textContent = `❌ ${reactionTime}ms - Too slow!`;
+                        endMiniGame(false);
+                    }
+                }
+            };
+
+            // Random delay before turning green
+            setTimeout(() => {
+                box.style.background = '#22c55e';
+                box.textContent = 'GO!';
+                canClick = true;
+                startTime = Date.now();
+            }, 2000 + Math.random() * 3000);
+        }
+
+        // Memory Mini-Game
+        function startMemoryGame() {
+            const sequence = [];
+            const colors = ['red', 'blue', 'green', 'yellow'];
+            let playerSequence = [];
+            let showingPattern = true;
+
+            // Generate 4-color sequence
+            for (let i = 0; i < 4; i++) {
+                sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+            }
+
+            // Show pattern
+            function showPattern(index) {
+                if (index >= sequence.length) {
+                    showingPattern = false;
+                    document.getElementById('memoryStatus').textContent = 'Your turn! Repeat the pattern!';
+                    enableButtons();
+                    return;
+                }
+
+                const btn = document.querySelector(`.memory-btn[data-color="${sequence[index]}"]`);
+                btn.style.opacity = '1';
+                btn.style.transform = 'scale(1.2)';
+
+                setTimeout(() => {
+                    btn.style.opacity = '0.5';
+                    btn.style.transform = 'scale(1)';
+                    setTimeout(() => showPattern(index + 1), 300);
+                }, 600);
+            }
+
+            function enableButtons() {
+                document.querySelectorAll('.memory-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        if (showingPattern) return;
+
+                        const color = btn.dataset.color;
+                        playerSequence.push(color);
+
+                        btn.style.opacity = '1';
+                        setTimeout(() => btn.style.opacity = '0.5', 200);
+
+                        // Check if correct
+                        if (color !== sequence[playerSequence.length - 1]) {
+                            document.getElementById('memoryStatus').textContent = '❌ Wrong sequence!';
+                            endMiniGame(false);
+                            return;
+                        }
+
+                        if (playerSequence.length === sequence.length) {
+                            document.getElementById('memoryStatus').textContent = '🎉 Perfect memory!';
+                            endMiniGame(true);
+                        }
+                    };
+                });
+            }
+
+            setTimeout(() => showPattern(0), 1000);
+        }
+
+        function endMiniGame(won) {
+            gameState.miniGameActive = false;
 
             setTimeout(() => {
                 document.getElementById('triviaModal').classList.remove('show');
 
-                if (correct) {
+                if (won) {
                     // Bonus: All players on current team move forward 1
                     const team = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
                     team.forEach(p => {
@@ -3896,11 +4078,10 @@
                     showVoiceBubble(`🎉 Team ${gameState.currentTeam} wins! All advance 1 space!`);
                     playCorrectSound();
                 } else {
-                    showVoiceBubble(`❌ Wrong! No bonus this time.`);
+                    showVoiceBubble(`❌ Mini-game failed! No bonus this time.`);
                     playWrongSound();
                 }
 
-                gameState.miniGameActive = false;
                 updatePlayerPositions();
                 nextPlayer();
             }, 1500);
@@ -3998,35 +4179,34 @@
         }
 
         function nextPlayer() {
-            const team = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
-            let nextIndex = gameState.currentPlayerIndex;
-            let attempts = 0;
+            // Alternate between all 8 players: T1P1, T2P1, T1P2, T2P2, T1P3, T2P3, T1P4, T2P4
+            const allPlayers = [];
+            for (let i = 0; i < 4; i++) {
+                allPlayers.push({ team: 1, index: i, player: gameState.team1[i] });
+                allPlayers.push({ team: 2, index: i, player: gameState.team2[i] });
+            }
+
+            // Find current position in the alternating order
+            let currentPos = -1;
+            for (let i = 0; i < allPlayers.length; i++) {
+                if (allPlayers[i].team === gameState.currentTeam &&
+                    allPlayers[i].index === gameState.currentPlayerIndex) {
+                    currentPos = i;
+                    break;
+                }
+            }
 
             // Find next unfinished player
+            let attempts = 0;
+            let nextPos = currentPos;
             do {
-                nextIndex = (nextIndex + 1) % team.length;
+                nextPos = (nextPos + 1) % allPlayers.length;
                 attempts++;
-            } while (team[nextIndex].finished && attempts < team.length);
+            } while (allPlayers[nextPos].player.finished && attempts < allPlayers.length);
 
-            // If all players in current team finished, switch teams
-            if (attempts >= team.length) {
-                gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
-                gameState.currentPlayerIndex = 0;
-                const newTeam = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
-                while (newTeam[gameState.currentPlayerIndex].finished) {
-                    gameState.currentPlayerIndex++;
-                }
-            } else if (nextIndex <= gameState.currentPlayerIndex) {
-                // Wrapped around, switch teams
-                gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
-                gameState.currentPlayerIndex = 0;
-                const newTeam = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
-                while (newTeam[gameState.currentPlayerIndex] && newTeam[gameState.currentPlayerIndex].finished) {
-                    gameState.currentPlayerIndex++;
-                }
-            } else {
-                gameState.currentPlayerIndex = nextIndex;
-            }
+            // Update game state
+            gameState.currentTeam = allPlayers[nextPos].team;
+            gameState.currentPlayerIndex = allPlayers[nextPos].index;
 
             updateUI();
             updateActionButton();
