@@ -5201,7 +5201,328 @@
             bgCamera.aspect = window.innerWidth / window.innerHeight;
             bgCamera.updateProjectionMatrix();
             bgRenderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Also resize game board
+            if (boardRenderer) {
+                boardCamera.aspect = window.innerWidth / window.innerHeight;
+                boardCamera.updateProjectionMatrix();
+                boardRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
         }
+
+        // ==================== 3D GAME BOARD ====================
+        let boardScene, boardCamera, boardRenderer, boardControls;
+        let ringPath3D, centerLightbulb;
+        let playerTokens3D = [];
+        let pathNodes3D = [];
+        let finishPlatforms = [];
+
+        function init3DGameBoard() {
+            // Create a separate overlay canvas for the game board
+            const canvas = document.createElement('canvas');
+            canvas.id = 'board-3d';
+            canvas.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                pointer-events: none;
+            `;
+            document.body.insertBefore(canvas, document.body.firstChild.nextSibling);
+
+            boardScene = new THREE.Scene();
+
+            boardCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+            boardCamera.position.set(0, 300, 400);
+            boardCamera.lookAt(0, 0, 0);
+
+            boardRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            boardRenderer.setSize(window.innerWidth, window.innerHeight);
+            boardRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            boardRenderer.setClearColor(0x000000, 0);
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            boardScene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xffd700, 1, 500);
+            pointLight.position.set(0, 50, 0);
+            boardScene.add(pointLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            directionalLight.position.set(100, 200, 100);
+            boardScene.add(directionalLight);
+
+            // Create the ring path
+            create3DRingPath();
+
+            // Create center lightbulb
+            createCenterLightbulb();
+
+            // Create finish platforms
+            createFinishPlatforms();
+
+            // Create player tokens
+            create3DPlayerTokens();
+
+            // Start animation
+            animate3DBoard();
+        }
+
+        function create3DRingPath() {
+            const ringRadius = 150;
+            const tubeRadius = 8;
+
+            // Create glowing torus ring
+            const torusGeometry = new THREE.TorusGeometry(ringRadius, tubeRadius, 16, 100);
+            const torusMaterial = new THREE.MeshStandardMaterial({
+                color: 0x667eea,
+                emissive: 0x333366,
+                emissiveIntensity: 0.3,
+                metalness: 0.5,
+                roughness: 0.3,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            ringPath3D = new THREE.Mesh(torusGeometry, torusMaterial);
+            ringPath3D.rotation.x = Math.PI / 2; // Lay flat
+            ringPath3D.position.y = 0;
+            boardScene.add(ringPath3D);
+
+            // Create path node markers
+            for (let i = 0; i < PATH_LENGTH; i++) {
+                const angle = (i / PATH_LENGTH) * Math.PI * 2 - Math.PI / 2; // Start from bottom
+                const x = Math.cos(angle) * ringRadius;
+                const z = Math.sin(angle) * ringRadius;
+
+                const nodeGeometry = new THREE.SphereGeometry(5, 16, 16);
+                const nodeMaterial = new THREE.MeshStandardMaterial({
+                    color: i % 5 === 0 ? 0xffd700 : 0x88aaff,
+                    emissive: i % 5 === 0 ? 0x554400 : 0x223355,
+                    emissiveIntensity: 0.5
+                });
+
+                const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+                node.position.set(x, 12, z);
+                boardScene.add(node);
+                pathNodes3D.push(node);
+            }
+        }
+
+        function createCenterLightbulb() {
+            // Lightbulb body (glowing sphere)
+            const bulbGeometry = new THREE.SphereGeometry(30, 32, 32);
+            const bulbMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffd700,
+                emissive: 0xffaa00,
+                emissiveIntensity: 0.8,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            centerLightbulb = new THREE.Mesh(bulbGeometry, bulbMaterial);
+            centerLightbulb.position.set(0, 40, 0);
+            boardScene.add(centerLightbulb);
+
+            // Add a glow effect (larger transparent sphere)
+            const glowGeometry = new THREE.SphereGeometry(45, 32, 32);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffd700,
+                transparent: true,
+                opacity: 0.2
+            });
+
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            centerLightbulb.add(glow);
+
+            // Lightbulb base
+            const baseGeometry = new THREE.CylinderGeometry(12, 15, 20, 16);
+            const baseMaterial = new THREE.MeshStandardMaterial({
+                color: 0x888888,
+                metalness: 0.8,
+                roughness: 0.2
+            });
+
+            const base = new THREE.Mesh(baseGeometry, baseMaterial);
+            base.position.y = -30;
+            centerLightbulb.add(base);
+        }
+
+        function createFinishPlatforms() {
+            // Team 1 finish platform (left)
+            const platform1Geometry = new THREE.CylinderGeometry(40, 45, 10, 32);
+            const platform1Material = new THREE.MeshStandardMaterial({
+                color: 0x3b82f6,
+                emissive: 0x1a4080,
+                emissiveIntensity: 0.3
+            });
+
+            const platform1 = new THREE.Mesh(platform1Geometry, platform1Material);
+            platform1.position.set(-200, -10, 0);
+            boardScene.add(platform1);
+            finishPlatforms.push(platform1);
+
+            // Team 2 finish platform (right)
+            const platform2Geometry = new THREE.CylinderGeometry(40, 45, 10, 32);
+            const platform2Material = new THREE.MeshStandardMaterial({
+                color: 0xeab308,
+                emissive: 0x806000,
+                emissiveIntensity: 0.3
+            });
+
+            const platform2 = new THREE.Mesh(platform2Geometry, platform2Material);
+            platform2.position.set(200, -10, 0);
+            boardScene.add(platform2);
+            finishPlatforms.push(platform2);
+        }
+
+        function create3DPlayerTokens() {
+            const ringRadius = 150;
+
+            // Create tokens for all players
+            const allPlayers = [
+                ...gameState.team1.map((p, i) => ({ ...p, team: 1, index: i })),
+                ...gameState.team2.map((p, i) => ({ ...p, team: 2, index: i }))
+            ];
+
+            allPlayers.forEach((player, idx) => {
+                const tokenGeometry = new THREE.ConeGeometry(8, 20, 8);
+                const tokenMaterial = new THREE.MeshStandardMaterial({
+                    color: new THREE.Color(player.color),
+                    emissive: new THREE.Color(player.color),
+                    emissiveIntensity: 0.3
+                });
+
+                const token = new THREE.Mesh(tokenGeometry, tokenMaterial);
+                token.rotation.x = Math.PI; // Point up
+
+                // Initial position (off board)
+                if (player.position < 0) {
+                    // Starting area
+                    token.position.set(player.team === 1 ? -200 : 200, 30, (idx % 2) * 30 - 15);
+                } else if (player.finished) {
+                    // Finish platform
+                    token.position.set(player.team === 1 ? -200 : 200, 20, (player.index * 20) - 20);
+                } else {
+                    // On the path
+                    const angle = (player.position / PATH_LENGTH) * Math.PI * 2 - Math.PI / 2;
+                    token.position.set(
+                        Math.cos(angle) * ringRadius,
+                        25,
+                        Math.sin(angle) * ringRadius
+                    );
+                }
+
+                token.userData = { playerData: player };
+                boardScene.add(token);
+                playerTokens3D.push(token);
+            });
+        }
+
+        function update3DPlayerPositions() {
+            const ringRadius = 150;
+
+            const allPlayers = [
+                ...gameState.team1.map((p, i) => ({ ...p, team: 1, index: i })),
+                ...gameState.team2.map((p, i) => ({ ...p, team: 2, index: i }))
+            ];
+
+            playerTokens3D.forEach((token, idx) => {
+                const player = allPlayers[idx];
+                if (!player) return;
+
+                let targetPos;
+
+                if (player.finished) {
+                    // Move to finish platform
+                    targetPos = new THREE.Vector3(
+                        player.team === 1 ? -200 : 200,
+                        20,
+                        (player.index * 25) - 25
+                    );
+                } else if (player.position < 0) {
+                    // Starting area
+                    targetPos = new THREE.Vector3(
+                        player.team === 1 ? -200 : 200,
+                        30,
+                        (idx % 2) * 30 - 15
+                    );
+                } else {
+                    // On the ring path
+                    const angle = (player.position / PATH_LENGTH) * Math.PI * 2 - Math.PI / 2;
+                    targetPos = new THREE.Vector3(
+                        Math.cos(angle) * ringRadius,
+                        25,
+                        Math.sin(angle) * ringRadius
+                    );
+                }
+
+                // Animate to target position
+                animateTokenTo(token, targetPos);
+            });
+        }
+
+        function animateTokenTo(token, targetPos) {
+            const startPos = token.position.clone();
+            const duration = 500;
+            const startTime = Date.now();
+
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+
+                token.position.lerpVectors(startPos, targetPos, eased);
+
+                // Add a little bounce
+                if (progress < 1) {
+                    token.position.y += Math.sin(progress * Math.PI) * 20;
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
+
+        function animate3DBoard() {
+            requestAnimationFrame(animate3DBoard);
+
+            // Gentle rotation of the entire scene
+            if (ringPath3D) {
+                ringPath3D.rotation.z += 0.001;
+            }
+
+            // Pulse the lightbulb
+            if (centerLightbulb) {
+                centerLightbulb.scale.setScalar(1 + Math.sin(Date.now() * 0.003) * 0.05);
+            }
+
+            // Rotate player tokens slightly
+            playerTokens3D.forEach(token => {
+                token.rotation.y += 0.02;
+            });
+
+            // Pulse path nodes
+            pathNodes3D.forEach((node, i) => {
+                node.scale.setScalar(1 + Math.sin(Date.now() * 0.005 + i * 0.3) * 0.1);
+            });
+
+            if (boardRenderer && boardScene && boardCamera) {
+                boardRenderer.render(boardScene, boardCamera);
+            }
+        }
+
+        // Hook into player position updates
+        const originalUpdatePlayerPositions = updatePlayerPositions;
+        updatePlayerPositions = function () {
+            originalUpdatePlayerPositions();
+            if (playerTokens3D.length > 0) {
+                update3DPlayerPositions();
+            }
+        };
 
         // ==================== 3D DICE ====================
         let diceScene, diceCamera, diceRenderer;
@@ -5381,6 +5702,7 @@
             // Initialize Three.js
             init3DBackground();
             init3DDice();
+            init3DGameBoard();
         }
 
         init();
