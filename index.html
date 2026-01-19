@@ -682,8 +682,7 @@
             position: relative;
             width: 520px;
             height: 480px;
-            display: none;
-            /* Hide 2D board - using 3D instead */
+            /* 2D board with 3D background */
         }
 
         /* Finish Zones */
@@ -5920,9 +5919,9 @@
             setupAgeModal();
 
             // Initialize Three.js
-            init3DBackground();
-            init3DDice();
-            init3DGameBoard();
+            init3DBackground();  // 3D starfield, nebulae, planets
+            init3DDice();        // 3D dice animation
+            // init3DGameBoard(); // Disabled - using 2D board instead
         }
 
         init();
