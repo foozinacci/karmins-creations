@@ -2823,7 +2823,23 @@
                 <p><strong>🔥 Win Streaks:</strong> Get 3+ correct in a row for bonus points!</p>
                 <p><strong>🎤 Voice:</strong> Click the mic to speak your answer!</p>
             </div>
-            <button class="age-btn teens" onclick="closeTutorial()">Got it! Let's Play! 🎮</button>
+
+            <!-- Restart Options -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.2); margin-top: 20px; padding-top: 20px;">
+                <p style="margin-bottom: 15px; color: rgba(255,255,255,0.7);">🔄 Restart Game?</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="feedback-btn" onclick="restartKeepLobby()" style="flex: 1; min-width: 200px;">
+                        🔄 New Game (Keep Lobby)
+                    </button>
+                    <button class="feedback-btn" onclick="restartNewLobby()"
+                        style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #ef4444, #dc2626);">
+                        🚪 New Lobby & Game
+                    </button>
+                </div>
+            </div>
+
+            <button class="age-btn teens" onclick="closeTutorial()" style="margin-top: 20px;">Got it! Let's Play!
+                🎮</button>
         </div>
     </div>
 
@@ -4522,6 +4538,80 @@
             showVoiceBubble('✅ Team customization saved!');
         }
 
+        // ==================== RESTART FUNCTIONS ====================
+        function restartKeepLobby() {
+            // Reset game state but keep multiplayer connection
+            gameState.team1.forEach(player => {
+                player.position = -1;
+                player.finished = false;
+                player.score = 0;
+                player.correctAnswers = 0;
+                player.wrongAnswers = 0;
+                player.winStreak = 0;
+            });
+            gameState.team2.forEach(player => {
+                player.position = -1;
+                player.finished = false;
+                player.score = 0;
+                player.correctAnswers = 0;
+                player.wrongAnswers = 0;
+                player.winStreak = 0;
+            });
+
+            gameState.currentTeam = 1;
+            gameState.currentPlayerIndex = 0;
+            gameState.gameComplete = false;
+            gameState.questionCount = 0;
+            gameState.pendingMove = 0;
+            gameState.isRolling = false;
+
+            gameStats.totalCorrect = 0;
+            gameStats.totalWrong = 0;
+
+            // Update all UI
+            renderPlayers();
+            updatePlayerPositions();
+            updateUI();
+            updateActionButton();
+
+            // Close modals
+            closeTutorial();
+            document.getElementById('winnerModal')?.classList.remove('show');
+
+            // Sync to other player in multiplayer
+            if (isMultiplayer && conn) {
+                sendGameState();
+                conn.send({ type: 'gameRestart', data: {} });
+            }
+
+            showVoiceBubble('🔄 New game started! Good luck!');
+        }
+
+        function restartNewLobby() {
+            // Disconnect from multiplayer if connected
+            if (peer) {
+                peer.destroy();
+                peer = null;
+            }
+            conn = null;
+            isMultiplayer = false;
+            isHost = false;
+
+            // Hide multiplayer indicator and chat
+            document.getElementById('multiplayerIndicator')?.classList.remove('show');
+            document.getElementById('chatToggle')?.classList.remove('show');
+            document.getElementById('chatContainer')?.classList.remove('show');
+
+            // Reset game state
+            restartKeepLobby();
+
+            // Show age selection modal
+            closeTutorial();
+            document.getElementById('ageModal').classList.add('show');
+
+            showVoiceBubble('🚪 Starting fresh! Select your options.');
+        }
+
         // ==================== P2P MULTIPLAYER ====================
         let peer = null;
         let conn = null;
@@ -4772,6 +4862,11 @@
                 case 'chat':
                     // Received chat message
                     addChatMessage(message.data.text, message.data.sender, false);
+                    break;
+
+                case 'gameRestart':
+                    // Other player restarted the game
+                    showVoiceBubble('🔄 Game restarted by other player!');
                     break;
             }
         }
