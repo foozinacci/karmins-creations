@@ -3376,8 +3376,9 @@
         // ==================== GAME LOGIC ====================
         function setupEventListeners() {
             document.getElementById('actionButton').addEventListener('click', handleAction);
-            document.getElementById('triviaButton').addEventListener('click', handleTriviaButton);
-            document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+            // Trivia is now part of roll, no separate button
+            const playAgainBtn = document.getElementById('playAgainBtn');
+            if (playAgainBtn) playAgainBtn.addEventListener('click', resetGame);
         }
 
         function handleTriviaButton() {
