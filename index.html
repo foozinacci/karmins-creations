@@ -3430,6 +3430,7 @@
                     const player = getCurrentPlayer();
                     player.position = 0;  // Start at position 0
                     gameState.pendingMove = roll; // Move by roll amount if trivia correct
+                    gameState.escapingPlayer = true; // Track escape attempt - wrong answer = back to base
                     updatePlayerPositions();
 
                     showVoiceBubble(`🎉 ${player.name} escaped! Answer to move ${roll} spaces!`);
@@ -3753,6 +3754,8 @@
                 document.getElementById('triviaModal').classList.remove('show');
 
                 if (correct) {
+                    gameState.escapingPlayer = false; // Clear escape flag on correct answer
+
                     // Move player forward
                     if (player.position < 0) {
                         player.position = 0;
@@ -3797,20 +3800,97 @@
                     }
 
                     updatePlayerPositions();
+
+                    // Check for mini-game every 6 questions
+                    if (gameState.questionCount > 0 && gameState.questionCount % 6 === 0) {
+                        setTimeout(() => {
+                            showMiniGame();
+                        }, 1000);
+                        gameState.pendingMove = 0;
+                        gameState.isRolling = false;
+                        return; // Mini-game will handle next player
+                    }
                 } else {
                     // WRONG ANSWER PENALTY
-                    // Players can only move back if they have room (position > 0)
-                    // They can NEVER go back below 0 (into their team panel)
-                    if (player.position > 0) {
+                    if (gameState.escapingPlayer) {
+                        // Player was trying to escape - failed! Back to base
+                        player.position = -1;
+                        showVoiceBubble(`❌ ${player.name} failed to escape! Back to base.`);
+                        gameState.escapingPlayer = false;
+                    } else if (player.position > 0) {
                         // Move back by the pending move amount, but never below 0
                         player.position = Math.max(0, player.position - gameState.pendingMove);
-                        updatePlayerPositions();
                     }
-                    // If player is at position 0, they stay there (can't go back to panel)
+                    updatePlayerPositions();
                 }
 
                 gameState.pendingMove = 0;
                 gameState.isRolling = false;
+                nextPlayer();
+            }, 1500);
+        }
+
+        // Mini-game for all 8 players every 6 questions
+        function showMiniGame() {
+            showVoiceBubble('🎮 MINI-GAME TIME! All 8 players compete!');
+
+            const question = getRandomQuestion('medium');
+            gameState.currentQuestion = question;
+            gameState.miniGameActive = true;
+
+            document.getElementById('triviaPlayerName').innerHTML =
+                '🎮 <span style="color: #fbbf24">MINI-GAME!</span> - All 8 players race to answer!';
+            document.getElementById('questionText').textContent = question.question;
+
+            const optionsContainer = document.getElementById('answerOptions');
+            optionsContainer.innerHTML = question.answers.map((answer, i) => `
+                <button class="answer-option mini-game-btn" data-index="${i}">${answer}</button>
+            `).join('');
+
+            optionsContainer.querySelectorAll('.answer-option').forEach(btn => {
+                btn.addEventListener('click', handleMiniGameAnswer);
+            });
+
+            document.getElementById('triviaModal').classList.add('show');
+            startTimer();
+        }
+
+        function handleMiniGameAnswer(e) {
+            if (!gameState.miniGameActive) return;
+
+            stopTimer();
+            const clickedIndex = parseInt(e.target.dataset.index);
+            const correct = clickedIndex === gameState.currentQuestion.correct;
+
+            document.querySelectorAll('.answer-option').forEach(btn => {
+                btn.disabled = true;
+                if (parseInt(btn.dataset.index) === gameState.currentQuestion.correct) {
+                    btn.classList.add('correct');
+                } else if (btn === e.target && !correct) {
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            setTimeout(() => {
+                document.getElementById('triviaModal').classList.remove('show');
+
+                if (correct) {
+                    // Bonus: All players on current team move forward 1
+                    const team = gameState.currentTeam === 1 ? gameState.team1 : gameState.team2;
+                    team.forEach(p => {
+                        if (!p.finished && p.position >= 0) {
+                            p.position = Math.min(PATH_LENGTH - 1, p.position + 1);
+                        }
+                    });
+                    showVoiceBubble(`🎉 Team ${gameState.currentTeam} wins! All advance 1 space!`);
+                    playCorrectSound();
+                } else {
+                    showVoiceBubble(`❌ Wrong! No bonus this time.`);
+                    playWrongSound();
+                }
+
+                gameState.miniGameActive = false;
+                updatePlayerPositions();
                 nextPlayer();
             }, 1500);
         }
