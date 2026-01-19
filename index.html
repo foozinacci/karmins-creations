@@ -2501,6 +2501,15 @@
     <button class="music-btn" id="chatBtn" onclick="toggleChat()"
         style="left: 80px; background: linear-gradient(135deg, #3b82f6, #2563eb);">💬</button>
 
+    <!-- Zoom Controls -->
+    <div id="zoomControls"
+        style="position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 5px; z-index: 100;">
+        <button onclick="zoomIn()"
+            style="width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">+</button>
+        <button onclick="zoomOut()"
+            style="width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">−</button>
+    </div>
+
     <!-- Age Selection Modal -->
     <div class="modal-overlay show" id="ageModal">
         <div class="age-modal">
@@ -5313,6 +5322,32 @@
             }
         }
 
+        // ==================== ZOOM CONTROLS ====================
+        let currentZoom = 1;
+        const MIN_ZOOM = 0.5;
+        const MAX_ZOOM = 2;
+
+        function zoomIn() {
+            currentZoom = Math.min(MAX_ZOOM, currentZoom + 0.1);
+            updateCameraZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(MIN_ZOOM, currentZoom - 0.1);
+            updateCameraZoom();
+        }
+
+        function updateCameraZoom() {
+            if (boardCamera) {
+                // Adjust camera position based on zoom
+                const baseDistance = 400;
+                const baseHeight = 300;
+                boardCamera.position.z = baseDistance / currentZoom;
+                boardCamera.position.y = baseHeight / currentZoom;
+                boardCamera.lookAt(0, 0, 0);
+            }
+        }
+
         // ==================== 3D GAME BOARD ====================
         let boardScene, boardCamera, boardRenderer, boardControls;
         let ringPath3D, centerLightbulb;
@@ -5455,35 +5490,74 @@
         }
 
         function createFinishPlatforms() {
-            // Team 1 finish platform (left)
-            const platform1Geometry = new THREE.CylinderGeometry(40, 45, 10, 32);
-            const platform1Material = new THREE.MeshStandardMaterial({
+            // Team 1 platform (left) - Hexagonal shape
+            const hexShape = new THREE.Shape();
+            const hexRadius = 55;
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2 - Math.PI / 6;
+                const x = Math.cos(angle) * hexRadius;
+                const y = Math.sin(angle) * hexRadius;
+                if (i === 0) hexShape.moveTo(x, y);
+                else hexShape.lineTo(x, y);
+            }
+            hexShape.closePath();
+
+            const extrudeSettings = { depth: 8, bevelEnabled: true, bevelSize: 3, bevelThickness: 2 };
+
+            // Team 1 hexagon
+            const hex1Geometry = new THREE.ExtrudeGeometry(hexShape, extrudeSettings);
+            const hex1Material = new THREE.MeshStandardMaterial({
                 color: 0x3b82f6,
                 emissive: 0x1a4080,
-                emissiveIntensity: 0.3
+                emissiveIntensity: 0.4,
+                metalness: 0.3,
+                roughness: 0.5
             });
 
-            const platform1 = new THREE.Mesh(platform1Geometry, platform1Material);
-            platform1.position.set(-200, -10, 0);
+            const platform1 = new THREE.Mesh(hex1Geometry, hex1Material);
+            platform1.rotation.x = -Math.PI / 2; // Lay flat
+            platform1.position.set(-200, -5, 0);
             boardScene.add(platform1);
             finishPlatforms.push(platform1);
 
-            // Team 2 finish platform (right)
-            const platform2Geometry = new THREE.CylinderGeometry(40, 45, 10, 32);
-            const platform2Material = new THREE.MeshStandardMaterial({
+            // Add glowing ring around platform 1
+            const ring1Geometry = new THREE.TorusGeometry(hexRadius + 5, 2, 8, 6);
+            const ring1Material = new THREE.MeshBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.7 });
+            const ring1 = new THREE.Mesh(ring1Geometry, ring1Material);
+            ring1.rotation.x = Math.PI / 2;
+            ring1.position.set(-200, 5, 0);
+            boardScene.add(ring1);
+
+            // Team 2 hexagon (right)
+            const hex2Geometry = new THREE.ExtrudeGeometry(hexShape, extrudeSettings);
+            const hex2Material = new THREE.MeshStandardMaterial({
                 color: 0xeab308,
                 emissive: 0x806000,
-                emissiveIntensity: 0.3
+                emissiveIntensity: 0.4,
+                metalness: 0.3,
+                roughness: 0.5
             });
 
-            const platform2 = new THREE.Mesh(platform2Geometry, platform2Material);
-            platform2.position.set(200, -10, 0);
+            const platform2 = new THREE.Mesh(hex2Geometry, hex2Material);
+            platform2.rotation.x = -Math.PI / 2;
+            platform2.position.set(200, -5, 0);
             boardScene.add(platform2);
             finishPlatforms.push(platform2);
+
+            // Add glowing ring around platform 2
+            const ring2Geometry = new THREE.TorusGeometry(hexRadius + 5, 2, 8, 6);
+            const ring2Material = new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.7 });
+            const ring2 = new THREE.Mesh(ring2Geometry, ring2Material);
+            ring2.rotation.x = Math.PI / 2;
+            ring2.position.set(200, 5, 0);
+            boardScene.add(ring2);
         }
 
         function create3DPlayerTokens() {
             const ringRadius = 150;
+
+            // Player emojis for 2.5D billboard style
+            const playerEmojis = ['🧑‍🚀', '⭐', '🦸', '🔮', '🌸', '🔥', '🌊', '💎'];
 
             // Create tokens for all players
             const allPlayers = [
@@ -5492,45 +5566,75 @@
             ];
 
             allPlayers.forEach((player, idx) => {
-                const tokenGeometry = new THREE.ConeGeometry(8, 20, 8);
-                const tokenMaterial = new THREE.MeshStandardMaterial({
-                    color: new THREE.Color(player.color),
-                    emissive: new THREE.Color(player.color),
-                    emissiveIntensity: 0.3
+                // Create a sprite (2D billboard) for each player
+                const canvas = document.createElement('canvas');
+                canvas.width = 128;
+                canvas.height = 128;
+                const ctx = canvas.getContext('2d');
+
+                // Draw circular background with player color
+                ctx.beginPath();
+                ctx.arc(64, 64, 58, 0, Math.PI * 2);
+                ctx.fillStyle = player.color;
+                ctx.fill();
+
+                // Add glowing border
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                // Add inner glow
+                const gradient = ctx.createRadialGradient(64, 64, 30, 64, 64, 60);
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Draw emoji
+                ctx.font = '48px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(playerEmojis[idx] || '🎮', 64, 64);
+
+                // Create sprite texture
+                const texture = new THREE.CanvasTexture(canvas);
+                const spriteMaterial = new THREE.SpriteMaterial({
+                    map: texture,
+                    transparent: true
                 });
 
-                const token = new THREE.Mesh(tokenGeometry, tokenMaterial);
-                token.rotation.x = Math.PI; // Point up
+                const token = new THREE.Sprite(spriteMaterial);
+                token.scale.set(30, 30, 1);
 
                 // Get position for player on team base (2x2 grid)
                 const baseX = player.team === 1 ? -200 : 200;
                 const gridPos = [
-                    { x: -15, z: -15 },
-                    { x: 15, z: -15 },
-                    { x: -15, z: 15 },
-                    { x: 15, z: 15 }
+                    { x: -20, z: -20 },
+                    { x: 20, z: -20 },
+                    { x: -20, z: 20 },
+                    { x: 20, z: 20 }
                 ];
 
                 // Initial position
                 if (player.position < 0) {
                     // On team base platform (2x2 arrangement)
                     const pos = gridPos[player.index] || { x: 0, z: 0 };
-                    token.position.set(baseX + pos.x, 15, pos.z);
+                    token.position.set(baseX + pos.x, 25, pos.z);
                 } else if (player.finished) {
                     // Finish platform
                     const pos = gridPos[player.index] || { x: 0, z: 0 };
-                    token.position.set(baseX + pos.x, 15, pos.z);
+                    token.position.set(baseX + pos.x, 25, pos.z);
                 } else {
                     // On the path
                     const angle = (player.position / PATH_LENGTH) * Math.PI * 2 - Math.PI / 2;
                     token.position.set(
                         Math.cos(angle) * ringRadius,
-                        25,
+                        35,
                         Math.sin(angle) * ringRadius
                     );
                 }
 
-                token.userData = { playerData: player };
+                token.userData = { playerData: player, emoji: playerEmojis[idx] };
                 boardScene.add(token);
                 playerTokens3D.push(token);
             });
